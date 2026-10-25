@@ -1112,6 +1112,249 @@ input[type="range"]::-webkit-slider-thumb {
   color: #fff;
 }
 
+/* Route Alternatives Selection (terra2.md Section 2) */
+.route-alternatives-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.route-alt-card {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.route-alt-card:hover {
+  border-color: var(--neon-cyan);
+}
+
+.route-alt-card.active {
+  border-color: var(--neon-cyan);
+  background: rgba(72, 223, 255, 0.12);
+  box-shadow: 0 0 14px rgba(72, 223, 255, 0.25);
+}
+
+.route-alt-name {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.route-alt-stats {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--neon-cyan);
+}
+
+/* Guidance Source Selector Pills */
+.nav-mode-selector-row {
+  display: flex;
+  gap: 0.4rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem;
+}
+
+.nav-source-pill {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.nav-source-pill.active {
+  background: rgba(72, 223, 255, 0.18);
+  color: var(--neon-cyan);
+  border: 1px solid rgba(72, 223, 255, 0.35);
+}
+
+/* Mode Badges */
+.nav-sim-badge {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 188, 112, 0.2);
+  color: var(--neon-amber);
+  border: 1px solid rgba(255, 188, 112, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.nav-sim-badge.gps {
+  background: rgba(72, 223, 255, 0.2);
+  color: var(--neon-cyan);
+  border-color: rgba(72, 223, 255, 0.4);
+}
+
+/* Active Navigation Bottom Panel (terra2.md Section 5) */
+.active-nav-bottom-panel {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 25, 35, 0.94);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  z-index: 50;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(72, 223, 255, 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.nav-bottom-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.nav-bottom-time {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--neon-cyan);
+}
+
+.nav-bottom-dist-eta {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.nav-progress-wrap {
+  width: 140px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.nav-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-emerald));
+  transition: width 0.3s ease;
+}
+
+.nav-ctrl-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-hud);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.nav-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.nav-ctrl-btn.danger {
+  background: rgba(255, 0, 127, 0.15);
+  border-color: rgba(255, 0, 127, 0.35);
+  color: var(--neon-magenta);
+}
+
+.nav-ctrl-btn.danger:hover {
+  background: rgba(255, 0, 127, 0.3);
+  color: #fff;
+}
+
+/* Navigation Arrival Confirmation Modal (terra2.md Section 3) */
+.nav-arrival-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 25, 35, 0.96);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--neon-emerald);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 240, 150, 0.3);
+  border-radius: var(--radius-md);
+  padding: 2rem 2.5rem;
+  text-align: center;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.arrival-icon {
+  font-size: 3rem;
+  color: var(--neon-emerald);
+}
+
+.arrival-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.arrival-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.btn-arrival-done {
+  padding: 0.65rem 1.8rem;
+  background: linear-gradient(135deg, var(--neon-cyan), #00b4d8);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #080B10;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(72, 223, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-arrival-done:hover {
+  box-shadow: 0 0 24px rgba(72, 223, 255, 0.65);
+  transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
   .top-hud {
     flex-direction: column;
@@ -1131,5 +1374,15 @@ input[type="range"]::-webkit-slider-thumb {
     left: 1rem;
     right: 1rem;
     width: auto;
+  }
+  .active-nav-bottom-panel {
+    bottom: 1rem;
+    width: calc(100% - 2rem);
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+  }
+  .nav-progress-wrap {
+    width: 100%;
   }
 }

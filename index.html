@@ -177,6 +177,21 @@
       </div>
     </div>
 
+    <!-- Route Alternatives Selection (terra2.md Section 2) -->
+    <div class="route-alternatives-row" id="route-alternatives-row">
+      <!-- Populated dynamically: Fastest Route vs Scenic Alternative -->
+    </div>
+
+    <!-- Guidance Mode (Simulation vs Live GPS) -->
+    <div class="nav-mode-selector-row">
+      <button class="nav-source-pill active" id="btn-source-sim" data-source="sim">
+        <span>🎮 Demo Simulation</span>
+      </button>
+      <button class="nav-source-pill" id="btn-source-gps" data-source="gps">
+        <span>🛰️ Live Device GPS</span>
+      </button>
+    </div>
+
     <!-- Route Overview Box -->
     <div class="route-metrics-row">
       <div class="metric-item">
@@ -201,14 +216,60 @@
     </button>
   </aside>
 
-  <!-- Active In-Ride 3D Navigation Banner -->
+  <!-- Active In-Ride 3D Navigation Banner (terra2.md Section 5) -->
   <aside class="glass-panel active-nav-banner hidden" id="active-nav-banner">
     <div class="nav-maneuver-big-icon" id="active-nav-icon">↗</div>
     <div class="nav-instruction-col">
-      <div class="nav-instruction-text" id="active-nav-instruction">Follow illuminated route</div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:2px;">
+        <span class="nav-instruction-text" id="active-nav-instruction">Follow illuminated route</span>
+        <span class="nav-sim-badge" id="nav-mode-badge">SIMULATION 2X</span>
+      </div>
       <div class="nav-instruction-dist" id="active-nav-remaining">In 400m · Total remaining</div>
     </div>
-    <button class="btn-exit-nav" id="btn-exit-navigation">Exit Navigation</button>
+    <button class="btn-exit-nav" id="btn-exit-navigation">Exit</button>
+  </aside>
+
+  <!-- Active Navigation Bottom Control Panel (terra2.md Section 5) -->
+  <aside class="glass-panel active-nav-bottom-panel hidden" id="active-nav-bottom-panel">
+    <div class="nav-bottom-stats">
+      <div class="nav-bottom-time" id="nav-bottom-time">18 MIN</div>
+      <div class="nav-bottom-dist-eta">
+        <span id="nav-bottom-dist" style="font-weight:700; color:var(--text-primary);">12.4 MI</span>
+        <span id="nav-bottom-eta" style="color:var(--text-muted); font-size:0.72rem;">ETA 11:20 PM</span>
+      </div>
+    </div>
+    <div class="nav-progress-wrap" title="Route Completion Progress">
+      <div class="nav-progress-bar" id="nav-progress-bar"></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.5rem;">
+      <button class="nav-ctrl-btn" id="btn-sim-speed" title="Toggle Simulation Speed">
+        <span id="btn-sim-speed-label">2x</span>
+      </button>
+      <button class="nav-ctrl-btn" id="btn-pause-resume" title="Pause / Resume Guidance">
+        <span id="btn-pause-resume-label">⏸ Pause</span>
+      </button>
+      <button class="nav-ctrl-btn danger" id="btn-exit-nav-bottom" title="Exit 3D Navigation">
+        <span>✕ Exit</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Navigation Arrival Modal (terra2.md Section 3 Arrival Handling) -->
+  <aside class="glass-panel nav-arrival-modal hidden" id="nav-arrival-modal">
+    <div class="arrival-icon">🏁</div>
+    <div class="arrival-title" id="arrival-title">You Have Arrived!</div>
+    <div class="arrival-subtitle" id="arrival-subtitle">Destination reached safely along illuminated route</div>
+    <div class="route-metrics-row" style="width:100%; margin:0.5rem 0;">
+      <div class="metric-item">
+        <span class="metric-label">Total Distance</span>
+        <span class="metric-val" id="arrival-distance">12.4 MI</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Drive Time</span>
+        <span class="metric-val" id="arrival-time">18 MIN</span>
+      </div>
+    </div>
+    <button class="btn-arrival-done" id="btn-arrival-done">Done & Return to Map</button>
   </aside>
 
   <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card (Section 3.E) -->
