@@ -46,6 +46,50 @@ import { StreetRoamController } from './street-roam.js';
   const telemetryHeading = document.getElementById('telemetry-heading');
   const telemetryZoom = document.getElementById('telemetry-zoom');
 
+  // Place Detail Card Elements
+  const placeDetailCard = document.getElementById('place-detail-card');
+  const placeCatBadge = document.getElementById('place-cat-badge');
+  const btnClosePlaceCard = document.getElementById('btn-close-place-card');
+  const placeDetailTitle = document.getElementById('place-detail-title');
+  const placeReviewsText = document.getElementById('place-reviews-text');
+  const placeAddressText = document.getElementById('place-address-text');
+  const btnPlaceDirections = document.getElementById('btn-place-directions');
+  const btnPlaceStreetView = document.getElementById('btn-place-street-view');
+  const btnPlaceFlyover = document.getElementById('btn-place-flyover');
+  const btnPlaceSave = document.getElementById('btn-place-save');
+  const btnSaveLabel = document.getElementById('btn-save-label');
+  const placeDescText = document.getElementById('place-desc-text');
+
+  // Multi-Modal Directions Drawer Elements
+  const directionsDrawer = document.getElementById('directions-drawer');
+  const btnCloseDirections = document.getElementById('btn-close-directions');
+  const modeTabs = document.querySelectorAll('.mode-tab');
+  const routeOriginInput = document.getElementById('route-origin-input');
+  const btnSwapEndpoints = document.getElementById('btn-swap-endpoints');
+  const routeDestInput = document.getElementById('route-dest-input');
+  const dirDrawerDistance = document.getElementById('dir-drawer-distance');
+  const dirDrawerDuration = document.getElementById('dir-drawer-duration');
+  const dirStepsList = document.getElementById('dir-steps-list');
+  const btnStartNav = document.getElementById('btn-start-navigation');
+
+  // Active Navigation Banner Elements
+  const activeNavBanner = document.getElementById('active-nav-banner');
+  const activeNavIcon = document.getElementById('active-nav-icon');
+  const activeNavInstruction = document.getElementById('active-nav-instruction');
+  const activeNavRemaining = document.getElementById('active-nav-remaining');
+  const btnExitNav = document.getElementById('btn-exit-navigation');
+
+  let selectedPlace = {
+    title: "Pholram Park",
+    subtitle: "Rishi Nagar, Pitampura, North West Delhi, India",
+    coords: [77.1273, 28.6867],
+    category: "sights",
+    categoryLabel: "Park & Recreation",
+    rating: "4.8",
+    reviews: "1,240 Google reviews",
+    description: "Serene neighborhood green space nestled within Rishi Nagar and Rani Bagh in Delhi. Features walking loops, manicured grass, and dense tree canopies."
+  };
+
   let userLocation = null;
   let userMarker = null;
 
@@ -184,12 +228,16 @@ import { StreetRoamController } from './street-roam.js';
   railPlaces?.addEventListener('click', () => {
     activateRail(railPlaces);
     const randomPoi = POI_DATA[Math.floor(Math.random() * POI_DATA.length)];
-    if (randomPoi) mapEngine.flyTo(randomPoi.coords, randomPoi.camera.zoom, randomPoi.camera.pitch, randomPoi.camera.bearing);
+    if (randomPoi) showPlaceDetail(randomPoi);
   });
 
   railDirections?.addEventListener('click', () => {
     activateRail(railDirections);
-    routeHud.classList.remove('hidden');
+    if (selectedPlace) {
+      openDirectionsDrawer(selectedPlace.coords, selectedPlace.title);
+    } else {
+      openDirectionsDrawer([-80.1300, 25.7907], "Ocean Drive Promenade");
+    }
   });
 
   railLayers?.addEventListener('click', () => {
@@ -200,6 +248,25 @@ import { StreetRoamController } from './street-roam.js';
   railLocation?.addEventListener('click', () => {
     activateRail(railLocation);
     btnGpsLocate?.click();
+  });
+
+  railSaved?.addEventListener('click', () => {
+    activateRail(railSaved);
+    showPlaceDetail({
+      title: "Pholram Park",
+      subtitle: "Rishi Nagar, Pitampura, North West Delhi, India",
+      coords: [77.1273, 28.6867],
+      category: "sights",
+      categoryLabel: "Saved Green Space",
+      rating: "4.8",
+      reviews: "1,240 Google reviews",
+      description: "Saved favorite: Serene neighborhood park in Delhi featuring walking track loops, shaded tree canopies, and vibrant residential street surroundings."
+    });
+  });
+
+  railSettings?.addEventListener('click', () => {
+    activateRail(railSettings);
+    btnToggleNeon.click();
   });
 
   // Right Camera Controls (Section 3.C)
@@ -350,10 +417,20 @@ import { StreetRoamController } from './street-roam.js';
         el.addEventListener('click', () => {
           const coords = el.dataset.coords.split(',').map(Number);
           const title = el.dataset.title;
+          const subtitle = el.querySelector('.search-cat')?.textContent || 'Global Landmark';
           searchInput.value = title;
           searchSuggestions.classList.add('hidden');
-          mapEngine.flyTo(coords, 16.5, 68, 30);
-          triggerRoute(coords, title);
+
+          showPlaceDetail({
+            title,
+            subtitle,
+            coords,
+            category: 'sights',
+            categoryLabel: 'Search Landmark',
+            rating: '4.9',
+            reviews: '2,450 Google reviews',
+            description: `${title} (${subtitle}) rendered with full 3D vector geometry, custom volumetric lighting, and interactive camera perspective.`
+          });
         });
       });
     }, 280);
@@ -385,49 +462,285 @@ import { StreetRoamController } from './street-roam.js';
     });
   });
 
+  // ==========================================================================
+  // Terra 3D - Place Detail Card Controller (Section 7)
+  // ==========================================================================
+  function showPlaceDetail(place) {
+    selectedPlace = place;
+    if (placeCatBadge) placeCatBadge.textContent = place.categoryLabel || place.category || 'Point of Interest';
+    if (placeDetailTitle) placeDetailTitle.textContent = place.title;
+    if (placeReviewsText) placeReviewsText.textContent = `(${place.reviews || '1,850 Google reviews'})`;
+    if (placeAddressText) placeAddressText.textContent = `📍 ${place.subtitle || place.address || 'Global Destination'}`;
+    if (placeDescText) {
+      placeDescText.textContent = place.description || `${place.title} is an authentic real-world landmark rendered in full photorealistic 3D vector geometry.`;
+    }
+
+    placeDetailCard?.classList.remove('hidden');
+    directionsDrawer?.classList.add('hidden');
+    activeNavBanner?.classList.add('hidden');
+    routeHud?.classList.add('hidden');
+
+    if (place.coords) {
+      mapEngine.flyTo(place.coords, 16.5, 66, 32);
+    }
+  }
+
+  btnClosePlaceCard?.addEventListener('click', () => {
+    placeDetailCard?.classList.add('hidden');
+  });
+
+  btnPlaceSave?.addEventListener('click', () => {
+    const isSaved = btnSaveLabel?.textContent.includes('Saved');
+    if (btnSaveLabel) btnSaveLabel.textContent = isSaved ? 'Save' : 'Saved ⭐';
+    if (btnPlaceSave) {
+      btnPlaceSave.style.borderColor = isSaved ? 'var(--border-hud)' : 'var(--neon-amber)';
+      btnPlaceSave.style.color = isSaved ? 'var(--text-primary)' : 'var(--neon-amber)';
+    }
+  });
+
+  btnPlaceFlyover?.addEventListener('click', () => {
+    cinematicCtrl.toggle();
+  });
+
+  btnPlaceStreetView?.addEventListener('click', () => {
+    btnStreetRoam?.click();
+  });
+
+  btnPlaceDirections?.addEventListener('click', () => {
+    if (selectedPlace) {
+      openDirectionsDrawer(selectedPlace.coords, selectedPlace.title);
+    }
+  });
+
+  // Handle POI Marker Click Event
+  window.addEventListener('terra-poi-click', (e) => {
+    if (e.detail) showPlaceDetail(e.detail);
+  });
+
   // Handle Popup "Set GPS Waypoint" click
   document.addEventListener('click', (e) => {
     const routeBtn = e.target.closest('.btn-popup-route');
     if (routeBtn) {
       const coords = routeBtn.dataset.coords.split(',').map(Number);
       const name = routeBtn.dataset.name;
-      triggerRoute(coords, name);
+      openDirectionsDrawer(coords, name);
     }
   });
 
-  async function triggerRoute(destCoords, destName) {
-    const originCoords = userLocation || [-80.1918, 25.7617]; // Real user GPS or Downtown Vice City
-    routeHud.classList.remove('hidden');
-    routeDestName.textContent = `Destination: ${destName}`;
-    routeDistance.textContent = 'Calculating...';
-    routeDuration.textContent = '...';
+  // ==========================================================================
+  // Terra 3D - Multi-Modal Directions Drawer Controller (Section 3.E & 8)
+  // ==========================================================================
+  let currentNavRoute = null;
+  let currentNavMode = 'driving';
+
+  async function openDirectionsDrawer(destCoords, destName) {
+    placeDetailCard?.classList.add('hidden');
+    directionsDrawer?.classList.remove('hidden');
+    routeHud?.classList.add('hidden');
+    activeNavBanner?.classList.add('hidden');
+
+    if (routeDestInput) routeDestInput.value = destName;
+    const originCoords = userLocation || [-80.1918, 25.7617];
+    if (routeOriginInput) routeOriginInput.value = userLocation ? 'My GPS Location' : 'Downtown Miami (HQ)';
+
+    await updateDirections(currentNavMode, originCoords, destCoords, destName);
+  }
+
+  async function updateDirections(mode, originCoords, destCoords, destName) {
+    if (dirDrawerDistance) dirDrawerDistance.textContent = 'Calculating...';
+    if (dirDrawerDuration) dirDrawerDuration.textContent = '...';
+    if (dirStepsList) dirStepsList.innerHTML = '<div class="maneuver-item">Calculating live road navigation…</div>';
 
     const route = await routingEngine.calculateRoute(originCoords, destCoords, destName);
-    if (route) {
-      routeDistance.textContent = route.distance;
-      routeDuration.textContent = route.duration;
-      if (route.steps.length && route.steps[0].maneuver) {
-        routeManeuver.textContent = route.steps[0].maneuver.instruction || 'Follow highlighted neon road';
-      }
+    if (!route) return;
+
+    currentNavRoute = route;
+
+    // Apply modal speed adjustments
+    let durText = route.duration;
+    let distText = route.distance;
+    const baseMins = parseInt(route.duration) || 15;
+
+    if (mode === 'transit') {
+      durText = `${Math.round(baseMins * 1.35)} MIN`;
+    } else if (mode === 'walking') {
+      durText = `${Math.round(baseMins * 5.2)} MIN`;
+    }
+
+    if (dirDrawerDistance) dirDrawerDistance.textContent = distText;
+    if (dirDrawerDuration) dirDrawerDuration.textContent = durText;
+
+    // Build step maneuvers list
+    const steps = (route.steps && route.steps.length) ? route.steps : [
+      { maneuver: { instruction: `Head towards ${destName} on main artery` } },
+      { maneuver: { instruction: `Continue for 2.4 miles along illuminated corridor` } },
+      { maneuver: { instruction: `Turn into destination approach` } },
+      { maneuver: { instruction: `Arrive at ${destName}` } }
+    ];
+
+    if (dirStepsList) {
+      dirStepsList.innerHTML = steps.map((s, idx) => {
+        const instr = s.maneuver?.instruction || `Proceed along route segment ${idx + 1}`;
+        let icon = '⬆️';
+        if (instr.toLowerCase().includes('right')) icon = '↗️';
+        else if (instr.toLowerCase().includes('left')) icon = '↖️';
+        else if (instr.toLowerCase().includes('arrive') || idx === steps.length - 1) icon = '🏁';
+
+        return `
+          <div class="maneuver-item">
+            <span class="maneuver-item-icon">${icon}</span>
+            <div style="flex:1">
+              <div style="font-weight:600; color:var(--text-primary); margin-bottom:2px;">${instr}</div>
+              <div class="maneuver-item-dist">${s.distance ? (s.distance / 1609.34).toFixed(1) + ' mi' : 'Step ' + (idx + 1)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
   }
 
-  btnCancelRoute.addEventListener('click', () => {
-    routingEngine.clearRoute();
-    routeHud.classList.add('hidden');
+  // Transport Mode Tabs Switcher
+  modeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      modeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentNavMode = tab.dataset.mode;
+      if (selectedPlace) {
+        const originCoords = userLocation || [-80.1918, 25.7617];
+        updateDirections(currentNavMode, originCoords, selectedPlace.coords, selectedPlace.title);
+      }
+    });
   });
+
+  // Swap Endpoints
+  btnSwapEndpoints?.addEventListener('click', () => {
+    const temp = routeOriginInput.value;
+    routeOriginInput.value = routeDestInput.value;
+    routeDestInput.value = temp;
+  });
+
+  btnCloseDirections?.addEventListener('click', () => {
+    directionsDrawer?.classList.add('hidden');
+    routingEngine.clearRoute();
+  });
+
+  btnCancelRoute?.addEventListener('click', () => {
+    routingEngine.clearRoute();
+    routeHud?.classList.add('hidden');
+  });
+
+  // ==========================================================================
+  // Terra 3D - Active In-Ride 3D Navigation Simulation
+  // ==========================================================================
+  let inNavAnimationId = null;
+
+  btnStartNav?.addEventListener('click', () => {
+    if (!currentNavRoute || !currentNavRoute.coordinates || !currentNavRoute.coordinates.length) {
+      alert("Please calculate a route before starting navigation");
+      return;
+    }
+    startActive3DNavigation(currentNavRoute);
+  });
+
+  function startActive3DNavigation(route) {
+    directionsDrawer?.classList.add('hidden');
+    placeDetailCard?.classList.add('hidden');
+    activeNavBanner?.classList.remove('hidden');
+
+    // Camera cockpit angle
+    mapEngine.setPitch(74);
+
+    const coords = route.coordinates;
+    let stepIdx = 0;
+    const totalSteps = coords.length;
+
+    // Create navigation vehicle pointer marker if not present
+    let carMarker = window._navCarMarker;
+    if (!carMarker) {
+      const carEl = document.createElement('div');
+      carEl.className = 'gta-marker nav-car-marker';
+      carEl.innerHTML = `
+        <div class="marker-pulse" style="border-color: #00f0ff; animation-duration: 0.8s;"></div>
+        <div class="marker-badge" style="background: #00f0ff; box-shadow: 0 0 20px #00f0ff; width:34px; height:34px;">
+          <span style="font-size:16px;">🚗</span>
+        </div>
+      `;
+      carMarker = new maplibregl.Marker({ element: carEl }).setLngLat(coords[0]).addTo(mapEngine.map);
+      window._navCarMarker = carMarker;
+    }
+
+    function stepNavigation() {
+      if (stepIdx >= totalSteps - 1) {
+        if (activeNavInstruction) activeNavInstruction.textContent = `You have arrived at ${route.destinationName}!`;
+        if (activeNavRemaining) activeNavRemaining.textContent = "Route completed";
+        if (activeNavIcon) activeNavIcon.textContent = "🏁";
+        return;
+      }
+
+      const curr = coords[stepIdx];
+      const next = coords[Math.min(stepIdx + 1, totalSteps - 1)];
+
+      // Calculate bearing between curr and next
+      const dLng = (next[0] - curr[0]) * Math.cos(curr[1] * Math.PI / 180);
+      const dLat = next[1] - curr[1];
+      const bearing = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
+
+      carMarker.setLngLat(curr);
+
+      // Smooth camera chase
+      mapEngine.map.easeTo({
+        center: curr,
+        bearing: bearing,
+        pitch: 74,
+        zoom: 17.5,
+        duration: 950,
+        easing: (t) => t
+      });
+
+      // Update instructions
+      const pctLeft = Math.round(100 - (stepIdx / totalSteps) * 100);
+      if (activeNavInstruction) activeNavInstruction.textContent = `Proceed along illuminated route to ${route.destinationName}`;
+      if (activeNavRemaining) activeNavRemaining.textContent = `${pctLeft}% remaining · In-ride real-time guidance`;
+      if (activeNavIcon) activeNavIcon.textContent = stepIdx % 4 === 0 ? "↗️" : "⬆️";
+
+      stepIdx++;
+      inNavAnimationId = setTimeout(stepNavigation, 1000);
+    }
+
+    stepNavigation();
+  }
+
+  function exitActive3DNavigation() {
+    if (inNavAnimationId) {
+      clearTimeout(inNavAnimationId);
+      inNavAnimationId = null;
+    }
+    activeNavBanner?.classList.add('hidden');
+    mapEngine.setPitch(60);
+    routingEngine.clearRoute();
+    if (window._navCarMarker) {
+      window._navCarMarker.remove();
+      window._navCarMarker = null;
+    }
+  }
+
+  btnExitNav?.addEventListener('click', exitActive3DNavigation);
 
   // Global Keyboard Shortcuts
   window.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT') return;
     if (e.code === 'KeyR') {
-      btnStreetRoam.click();
+      btnStreetRoam?.click();
     } else if (e.code === 'KeyC') {
-      btnCinematic.click();
+      btnCinematic?.click();
     } else if (e.code === 'KeyN') {
-      btnToggleNeon.click();
+      btnToggleNeon?.click();
+    } else if (e.key === 'Escape') {
+      placeDetailCard?.classList.add('hidden');
+      directionsDrawer?.classList.add('hidden');
+      exitActive3DNavigation();
     }
   });
 
-  console.log("⚡ ViceMaps 3D Engine Initialized · GTA 6 Neon Dusk Theme");
+  console.log("⚡ Terra 3D Engine Initialized · Real-World Photorealistic 3D Mapping");
 })();

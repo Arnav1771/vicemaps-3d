@@ -240,6 +240,7 @@ export class MapEngine {
       this.markers.push(marker);
 
       el.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('terra-poi-click', { detail: poi }));
         if (poi.camera) {
           this.flyTo(poi.coords, poi.camera.zoom, poi.camera.pitch, poi.camera.bearing);
         }

@@ -110,6 +110,107 @@
     <button class="cat-pill" data-cat="sights">🏛️ Sights & Culture</button>
   </nav>
 
+  <!-- Place Detail Card (Section 7) -->
+  <aside class="glass-panel place-detail-card hidden" id="place-detail-card">
+    <div class="place-header">
+      <span class="place-category-badge" id="place-cat-badge">Sights & Culture</span>
+      <button class="btn-icon-close" id="btn-close-place-card" title="Close">✕</button>
+    </div>
+    <h2 class="place-title" id="place-detail-title">Times Square</h2>
+    <div class="place-meta-row">
+      <span class="place-stars">★ 4.9</span>
+      <span class="place-reviews" id="place-reviews-text">(2,450 Google reviews)</span>
+    </div>
+    <div class="place-address" id="place-address-text">
+      📍 Manhattan, New York, United States
+    </div>
+
+    <!-- Quick Action Grid -->
+    <div class="place-actions-grid">
+      <button class="place-action-btn primary" id="btn-place-directions">
+        <span>↗️</span>
+        <span>Directions</span>
+      </button>
+      <button class="place-action-btn" id="btn-place-street-view">
+        <span>🚶</span>
+        <span>Street View</span>
+      </button>
+      <button class="place-action-btn" id="btn-place-flyover">
+        <span>🎬</span>
+        <span>Flyover</span>
+      </button>
+      <button class="place-action-btn" id="btn-place-save">
+        <span>⭐</span>
+        <span id="btn-save-label">Save</span>
+      </button>
+    </div>
+
+    <p class="place-desc" id="place-desc-text">
+      The premier commercial intersection in Midtown Manhattan. Illuminated digital displays and dense skyscraper canyons.
+    </p>
+  </aside>
+
+  <!-- Multi-Modal Directions Drawer (Section 3.E & 8) -->
+  <aside class="glass-panel directions-drawer hidden" id="directions-drawer">
+    <div class="directions-header">
+      <span class="route-tag">DIRECTIONS & ROUTING</span>
+      <button class="btn-icon-close" id="btn-close-directions" title="Close">✕</button>
+    </div>
+
+    <!-- Transport Mode Tabs -->
+    <div class="mode-tabs-row">
+      <button class="mode-tab active" data-mode="driving">🚗 Drive</button>
+      <button class="mode-tab" data-mode="transit">🚆 Transit</button>
+      <button class="mode-tab" data-mode="walking">🚶 Walk</button>
+    </div>
+
+    <!-- Origin & Destination Inputs -->
+    <div class="endpoints-box">
+      <div class="endpoint-input-wrap">
+        <span class="endpoint-dot"></span>
+        <input type="text" id="route-origin-input" placeholder="Starting point (or 'My Location')" value="My Location">
+      </div>
+      <button class="btn-swap-endpoints" id="btn-swap-endpoints" title="Swap Origin & Destination">⇅</button>
+      <div class="endpoint-input-wrap">
+        <span class="endpoint-dot dest"></span>
+        <input type="text" id="route-dest-input" placeholder="Choose destination…">
+      </div>
+    </div>
+
+    <!-- Route Overview Box -->
+    <div class="route-metrics-row">
+      <div class="metric-item">
+        <span class="metric-label">Total Distance</span>
+        <span class="metric-val" id="dir-drawer-distance">--</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Est. Travel Time</span>
+        <span class="metric-val" id="dir-drawer-duration">--</span>
+      </div>
+    </div>
+
+    <!-- Step-by-Step Maneuvers -->
+    <div class="steps-container" id="dir-steps-list">
+      <!-- Steps populated dynamically -->
+    </div>
+
+    <!-- Start Active In-Ride Navigation Button -->
+    <button class="btn-start-nav" id="btn-start-navigation">
+      <span>▶</span>
+      <span>Start 3D Navigation</span>
+    </button>
+  </aside>
+
+  <!-- Active In-Ride 3D Navigation Banner -->
+  <aside class="glass-panel active-nav-banner hidden" id="active-nav-banner">
+    <div class="nav-maneuver-big-icon" id="active-nav-icon">↗</div>
+    <div class="nav-instruction-col">
+      <div class="nav-instruction-text" id="active-nav-instruction">Follow illuminated route</div>
+      <div class="nav-instruction-dist" id="active-nav-remaining">In 400m · Total remaining</div>
+    </div>
+    <button class="btn-exit-nav" id="btn-exit-navigation">Exit Navigation</button>
+  </aside>
+
   <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card (Section 3.E) -->
   <aside class="glass-panel route-hud hidden" id="route-hud">
     <div class="route-hud-header">
