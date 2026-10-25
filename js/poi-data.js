@@ -1,91 +1,103 @@
 /**
- * Curated Points of Interest (POIs) - Vice City / Miami Map
- * Includes iconic spots corresponding to GTA 6 trailer locations.
+ * Real-World Points of Interest (POIs) & Global Landmarks
+ * Google Maps Reimagined: Authentic global locations and commercial categories.
  */
 
 export const POI_DATA = [
   {
-    id: "ocean-drive",
-    title: "Ocean Drive & Art Deco Strip",
-    category: "strip",
-    categoryLabel: "Iconic Strip",
-    icon: "🌴",
-    color: "#00f0ff",
-    coords: [-80.1305, 25.7825],
-    camera: { zoom: 16.5, pitch: 70, bearing: 6 },
-    description: "The world-famous Art Deco neon avenue running along South Beach. High-density pedestrian buzz, vintage supercars, and pastel facades.",
-    tags: ["Beach", "Neon", "Cruising", "Nightlife"]
-  },
-  {
-    id: "malibu-club",
-    title: "The Malibu Club",
-    category: "nightlife",
-    categoryLabel: "Nightclub",
-    icon: "🍸",
-    color: "#ff007f",
-    coords: [-80.1328, 25.7905],
-    camera: { zoom: 16.8, pitch: 65, bearing: -30 },
-    description: "The legendary multi-level neon nightclub. Electronic synthwave beats, VIP rooftop lounge, and beachfront cocktail terrace.",
-    tags: ["Nightclub", "Synthwave", "VIP"]
-  },
-  {
-    id: "downtown-towers",
-    title: "Downtown Financial Towers & Skybridge",
-    category: "landmark",
-    categoryLabel: "Skyscrapers",
+    id: "times-square",
+    title: "Times Square & Broadway District",
+    category: "sights",
+    categoryLabel: "Iconic Landmark",
     icon: "🏙️",
     color: "#00f0ff",
-    coords: [-80.1905, 25.7715],
-    camera: { zoom: 16.0, pitch: 74, bearing: 45 },
-    description: "Volumetric glass monoliths towering over the bay. Includes rooftop infinity decks, high-speed elevators, and banking headquarters.",
-    tags: ["Skyscrapers", "Commercial", "3D Architecture"]
+    coords: [-73.9855, 40.7580],
+    camera: { zoom: 16.5, pitch: 72, bearing: 28 },
+    description: "The premier commercial intersection in Midtown Manhattan. Illuminated digital displays, Broadway theaters, and dense skyscraper canyons.",
+    tags: ["New York", "Manhattan", "Sightseeing", "Theaters"]
   },
   {
-    id: "downtown-helipad",
-    title: "Apex Tower Rooftop Helipad",
-    category: "helipad",
-    categoryLabel: "Helipad",
-    icon: "🚁",
+    id: "eiffel-tower",
+    title: "Eiffel Tower & Champ de Mars",
+    category: "sights",
+    categoryLabel: "Monument",
+    icon: "🗼",
     color: "#f59e0b",
-    coords: [-80.1872, 25.7680],
-    camera: { zoom: 17.2, pitch: 75, bearing: 110 },
-    description: "Private executive rooftop helipad standing 210 meters above Biscayne Bay. Prime launch point for panoramic aerial city flyovers.",
-    tags: ["Aviation", "Helipad", "Skyline View"]
+    coords: [2.2945, 48.8584],
+    camera: { zoom: 16.2, pitch: 68, bearing: -45 },
+    description: "Wrought-iron lattice tower on the Champ de Mars in Paris. World-renowned architectural icon with panoramic Seine river views.",
+    tags: ["Paris", "France", "Monument", "Architecture"]
   },
   {
-    id: "port-of-vice",
-    title: "Port of Vice City & Mega-Terminal",
-    category: "marina",
-    categoryLabel: "Port & Marina",
-    icon: "⚓",
+    id: "shibuya-crossing",
+    title: "Shibuya Crossing & Hachiko Square",
+    category: "transit",
+    categoryLabel: "Transit & District",
+    icon: "🚆",
+    color: "#ff007f",
+    coords: [139.7006, 35.6595],
+    camera: { zoom: 17.0, pitch: 65, bearing: 15 },
+    description: "The world's busiest pedestrian scramble intersection outside Shibuya Station. Multi-directional neon video billboards and subway network.",
+    tags: ["Tokyo", "Japan", "Transit", "Crosswalk"]
+  },
+  {
+    id: "burj-khalifa",
+    title: "Burj Khalifa & Downtown Dubai",
+    category: "sights",
+    categoryLabel: "Super-Skyscraper",
+    icon: "✨",
+    color: "#00f0ff",
+    coords: [55.2744, 25.1972],
+    camera: { zoom: 16.0, pitch: 76, bearing: -60 },
+    description: "The tallest structure on Earth standing at 828 meters. Surrounded by the Dubai Fountain, luxury hotels, and expansive avenue grids.",
+    tags: ["Dubai", "UAE", "Skyscrapers", "Modern"]
+  },
+  {
+    id: "big-ben",
+    title: "Palace of Westminster & Big Ben",
+    category: "sights",
+    categoryLabel: "Historic Landmark",
+    icon: "🏛️",
+    color: "#f59e0b",
+    coords: [-0.1246, 51.5007],
+    camera: { zoom: 16.5, pitch: 66, bearing: 85 },
+    description: "The historic seat of the Parliament of the United Kingdom on the river Thames. Celebrated neo-Gothic clock tower and Westminster Bridge.",
+    tags: ["London", "UK", "History", "Thames"]
+  },
+  {
+    id: "ocean-drive",
+    title: "Ocean Drive & Art Deco District",
+    category: "restaurants",
+    categoryLabel: "Dining & Promenade",
+    icon: "🍽️",
     color: "#10b981",
-    coords: [-80.1700, 25.7760],
-    camera: { zoom: 15.2, pitch: 62, bearing: -75 },
-    description: "One of the busiest maritime cruise and cargo terminals in the Americas. Massive container gantries, luxury cruise liners, and deep-water docks.",
-    tags: ["Shipping", "Superyachts", "Harbor"]
+    coords: [-80.1305, 25.7825],
+    camera: { zoom: 16.5, pitch: 70, bearing: 6 },
+    description: "Historic waterfront promenade lined with sidewalk bistros, boutique hotels, and preserved 1930s Art Deco architecture.",
+    tags: ["Miami", "Bistros", "Architecture", "Dining"]
   },
   {
-    id: "venetian-islands",
-    title: "Venetian Causeway & Island Mansions",
-    category: "strip",
-    categoryLabel: "Causeway",
-    icon: "🌉",
-    color: "#8b5cf6",
-    coords: [-80.1600, 25.7905],
-    camera: { zoom: 15.6, pitch: 68, bearing: 82 },
-    description: "Chain of man-made residential barrier islands linked by toll bridges. Waterfront villas with private boat slips and bayfront skyline views.",
-    tags: ["Bridge", "Waterfront", "Speedway"]
+    id: "marina-bay",
+    title: "Marina Bay Sands & Gardens",
+    category: "hotels",
+    categoryLabel: "Hotel & Resort",
+    icon: "🏨",
+    color: "#ff007f",
+    coords: [103.8596, 1.2834],
+    camera: { zoom: 16.3, pitch: 68, bearing: -120 },
+    description: "Integrated resort complex featuring three 55-story hotel towers topped by a cantilevered SkyPark and infinite waterfront promenade.",
+    tags: ["Singapore", "Hotel", "Resort", "Waterfront"]
   },
   {
-    id: "star-island",
-    title: "Star Island Billionaire Enclave",
-    category: "landmark",
-    categoryLabel: "Luxury Estates",
-    icon: "🏰",
-    color: "#f59e0b",
-    coords: [-80.1500, 25.7780],
-    camera: { zoom: 16.2, pitch: 64, bearing: -40 },
-    description: "Gated celebrity island guarded by private water security. Mega-mansions with helicopter pads, tennis courts, and Biscayne Bay frontage.",
-    tags: ["Exclusive", "Estates", "Gated"]
+    id: "pholram-park",
+    title: "Pholram Park (Rishi Nagar, Delhi)",
+    category: "sights",
+    categoryLabel: "Public Green Park",
+    icon: "🌳",
+    color: "#10b981",
+    coords: [77.1273, 28.6867],
+    camera: { zoom: 16.8, pitch: 65, bearing: 24 },
+    description: "Public neighborhood park and green space located in the Rishi Nagar / Pitampura district of North West Delhi, India.",
+    tags: ["India", "Delhi", "Pitampura", "Rishi Nagar", "Park", "Pholram"]
   }
 ];

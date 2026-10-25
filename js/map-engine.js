@@ -240,6 +240,7 @@ export class MapEngine {
       this.markers.push(marker);
 
       el.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('terra-poi-click', { detail: poi }));
         if (poi.camera) {
           this.flyTo(poi.coords, poi.camera.zoom, poi.camera.pitch, poi.camera.bearing);
         }
@@ -275,6 +276,72 @@ export class MapEngine {
         this.map.setLayoutProperty(id, 'visibility', enabled ? 'visible' : 'none');
       }
     });
+  }
+
+  setLightingPreset(mode) {
+    if (!this.map.setLight) return;
+    const presets = {
+      golden: {
+        anchor: 'map',
+        color: '#FFBC70',       // Warm golden-hour sunlight
+        intensity: 0.65,
+        position: [1.5, 210, 32] // 210° azimuth, 32° altitude
+      },
+      daylight: {
+        anchor: 'map',
+        color: '#FFFFFF',       // Crisp neutral daylight
+        intensity: 0.85,
+        position: [1.5, 180, 65]
+      },
+      bluehour: {
+        anchor: 'map',
+        color: '#4860FF',       // Blue hour cool ambient
+        intensity: 0.48,
+        position: [1.5, 260, 10]
+      },
+      night: {
+        anchor: 'map',
+        color: '#18232F',       // Moonlit dark night
+        intensity: 0.28,
+        position: [1.5, 0, 90]
+      }
+    };
+
+    const cfg = presets[mode] || presets.golden;
+    this.map.setLight(cfg);
+  }
+
+  toggle2D3D() {
+    const currentPitch = this.map.getPitch();
+    const targetPitch = currentPitch > 25 ? 0 : 65;
+    this.map.easeTo({
+      pitch: targetPitch,
+      duration: 1000
+    });
+    return targetPitch > 25;
+  }
+
+  zoomIn() {
+    this.map.zoomIn({ duration: 400 });
+  }
+
+  zoomOut() {
+    this.map.zoomOut({ duration: 400 });
+  }
+
+  resetNorth() {
+    this.map.easeTo({
+      bearing: 0,
+      duration: 800
+    });
+  }
+
+  calculateAltitudeMeters() {
+    const zoom = this.map.getZoom();
+    // Mathematical formula approximation for camera altitude above ground in Web Mercator
+    const earthCircumference = 40075016.686;
+    const altitude = (earthCircumference * Math.cos(this.map.getCenter().lat * Math.PI / 180)) / Math.pow(2, zoom + 8);
+    return Math.max(12, Math.round(altitude * 100));
   }
 
   toggleNeonMode(enabled) {

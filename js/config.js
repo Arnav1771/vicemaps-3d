@@ -42,13 +42,22 @@ export const MAP_CONFIG = {
   // Iconic City Skylines
   cityBookmarks: [
     {
-      id: "vice-city",
-      name: "🌴 Vice City (Miami)",
+      id: "delhi-pholram",
+      name: "🇮🇳 Pholram Park (Delhi)",
+      center: [77.1273, 28.6867],
+      zoom: 16.8,
+      pitch: 65,
+      bearing: 24,
+      tag: "Pitampura / Rishi Nagar"
+    },
+    {
+      id: "miami",
+      name: "🌴 Miami (Biscayne Bay)",
       center: [-80.1880, 25.7725],
       zoom: 15.8,
       pitch: 65,
       bearing: 38,
-      tag: "GTA 6 Setting"
+      tag: "Coastal Skyline"
     },
     {
       id: "tokyo",
