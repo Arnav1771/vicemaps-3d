@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ViceMaps 3D · GTA VI Dusk Map Engine</title>
+  <meta name="description" content="Next-gen 3D map clone inspired by GTA VI trailer trailer neon dusk aesthetic with real-time 3D building extrusions, GPS navigation, and street roam.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- MapLibre GL JS v4.7.1 CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+
+  <!-- Fullscreen 3D Map Container -->
+  <div id="map"></div>
+
+  <!-- 1. Top HUD Bar -->
+  <header class="top-hud">
+    <!-- Brand Badge -->
+    <div class="glass-panel brand-badge">
+      <div class="brand-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <line x1="8" y1="2" x2="8" y2="18"></line>
+          <line x1="16" y1="6" x2="16" y2="22"></line>
+        </svg>
+      </div>
+      <div class="brand-text">
+        VICEMAPS <span>3D</span>
+        <span class="brand-tag">GTA VI</span>
+      </div>
+    </div>
+
+    <!-- Search Bar with Autocomplete Suggestions -->
+    <div class="search-box-wrap">
+      <div class="glass-panel search-input-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search Vice City landmarks, clubs, ports..." autocomplete="off">
+      </div>
+      <div id="search-suggestions" class="search-suggestions hidden"></div>
+    </div>
+
+    <!-- City / District Bookmarks Selector -->
+    <div class="city-select-wrap">
+      <select id="city-select" aria-label="Select Vice City District">
+        <!-- Options populated dynamically from config.js -->
+      </select>
+    </div>
+  </header>
+
+  <!-- Category Filter Pills -->
+  <nav class="category-filters-bar" id="category-filters">
+    <button class="cat-pill active" data-cat="all">⚡ All POIs</button>
+    <button class="cat-pill" data-cat="nightlife">🍸 Nightlife</button>
+    <button class="cat-pill" data-cat="missions">🎯 Missions</button>
+    <button class="cat-pill" data-cat="luxury">💎 Luxury</button>
+    <button class="cat-pill" data-cat="waterfront">🛥️ Waterfront</button>
+  </nav>
+
+  <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card -->
+  <aside class="glass-panel route-hud hidden" id="route-hud">
+    <div class="route-hud-header">
+      <span class="route-tag">GPS WAYPOINT ACTIVE</span>
+      <button class="btn-icon-close" id="btn-cancel-route" title="Cancel Route">✕</button>
+    </div>
+    <div class="route-dest-title" id="route-dest-name">Destination: Ocean Drive</div>
+    <div class="route-metrics-row">
+      <div class="metric-item">
+        <span class="metric-label">Distance</span>
+        <span class="metric-val" id="route-distance">-- km</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Est. Drive</span>
+        <span class="metric-val" id="route-duration">-- min</span>
+      </div>
+    </div>
+    <div class="route-maneuver-box">
+      <span class="maneuver-icon">↗</span>
+      <span id="route-maneuver">Follow highlighted neon vector path</span>
+    </div>
+  </aside>
+
+  <!-- 3. Right Floating Controls Dock -->
+  <aside class="controls-dock">
+    <button class="dock-btn active" id="btn-toggle-3d" title="Toggle 3D Buildings">
+      <span>🏢 3D Buildings</span>
+      <span class="btn-indicator">ON</span>
+    </button>
+    <button class="dock-btn active" id="btn-toggle-neon" title="Toggle Vice Neon Glow">
+      <span>🌆 Neon Dusk</span>
+      <span class="btn-indicator">ON</span>
+    </button>
+    <button class="dock-btn" id="btn-cinematic" title="Camera Orbit Cinematic Tour (Hotkey: C)">
+      <span>🎬 Cinematic Tour</span>
+    </button>
+    <button class="dock-btn" id="btn-street-roam" title="Street Level WASD Roam (Hotkey: R)">
+      <span>🏎️ Street Roam</span>
+    </button>
+
+    <div class="dock-slider-box">
+      <div class="slider-label-row">
+        <span>Camera Pitch</span>
+        <span class="slider-val-tag" id="pitch-val-text">65°</span>
+      </div>
+      <input type="range" id="pitch-slider" min="0" max="85" step="1" value="65" aria-label="Camera Pitch Angle">
+    </div>
+  </aside>
+
+  <!-- 4. Street Roam HUD Overlay (Speedometer & Controls) -->
+  <div class="glass-panel street-roam-hud hidden" id="street-hud">
+    <div class="speedometer-wrap">
+      <span class="speedometer-num" id="speedometer-val">0</span>
+      <span class="speedometer-unit">MPH</span>
+    </div>
+    <div class="roam-controls-hint">
+      Drive: <span class="roam-key">W</span> <span class="roam-key">S</span> | Steer: <span class="roam-key">A</span> <span class="roam-key">D</span> or Arrow Keys<br>
+      Press <span class="roam-key">R</span> or click button to exit Street Roam
+    </div>
+  </div>
+
+  <!-- 5. Bottom Telemetry Ticker -->
+  <footer class="glass-panel bottom-telemetry-bar">
+    <div class="telemetry-left">
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">COORDS:</span>
+        <span class="telemetry-val" id="telemetry-coords">25.7617°N, 80.1918°W</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">HEADING:</span>
+        <span class="telemetry-val" id="telemetry-heading">38° (PITCH 65°)</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">SCALE:</span>
+        <span class="telemetry-val" id="telemetry-zoom">Z15.6</span>
+      </div>
+    </div>
+    <div class="telemetry-right">
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">LIGHTING:</span>
+        <span class="telemetry-val">VICE CITY SUNSET · 210°</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">ENGINE:</span>
+        <span class="telemetry-val fps-badge">60 FPS · MAPLIBRE 3D</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Bootstrap Bundle (Works seamlessly on both file:// and http://) -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>

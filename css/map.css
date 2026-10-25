@@ -1,0 +1,204 @@
+/* ==========================================================================
+   ViceMaps 3D - Custom Map & Marker Styling
+   MapLibre GL JS overrides, GTA 6 radar markers, and custom neon popups
+   ========================================================================== */
+
+/* Map canvas fill */
+.maplibregl-map {
+  font-family: inherit;
+}
+
+/* Custom Marker Styling */
+.gta-marker {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(10, 14, 26, 0.92);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gta-marker:hover .marker-badge {
+  transform: scale(1.22);
+}
+
+.marker-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #00f0ff;
+  opacity: 0.8;
+  z-index: 1;
+  animation: radarPing 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes radarPing {
+  0% {
+    width: 28px;
+    height: 28px;
+    opacity: 0.9;
+  }
+  70% {
+    width: 64px;
+    height: 64px;
+    opacity: 0;
+  }
+  100% {
+    width: 64px;
+    height: 64px;
+    opacity: 0;
+  }
+}
+
+.marker-label {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 700;
+  color: #f8fafc;
+  background: rgba(6, 8, 18, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translate(-50%, -2px);
+}
+
+.gta-marker:hover .marker-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* MapLibre Popup Overrides */
+.maplibregl-popup {
+  z-index: 20;
+}
+
+.maplibregl-popup-content {
+  background: rgba(10, 14, 26, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 240, 255, 0.2) !important;
+  padding: 14px 16px !important;
+  color: #f8fafc;
+  min-width: 240px;
+  max-width: 280px;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: rgba(10, 14, 26, 0.95) !important;
+  border-bottom-color: rgba(10, 14, 26, 0.95) !important;
+}
+
+.gta-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.popup-tag {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.popup-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.popup-desc {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.popup-btn-wrap {
+  margin-top: 8px;
+}
+
+.btn-popup-route {
+  width: 100%;
+  padding: 7px 10px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(255, 0, 127, 0.2) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 6px;
+  color: #00f0ff;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-popup-route:hover {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.4) 0%, rgba(255, 0, 127, 0.4) 100%);
+  border-color: #00f0ff;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+/* MapLibre Controls subtle dark styling */
+.maplibregl-ctrl-group {
+  background: rgba(10, 14, 26, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.maplibregl-ctrl-group button {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.maplibregl-ctrl-group button span {
+  filter: invert(1);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(6, 8, 18, 0.7) !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: #94a3b8 !important;
+}

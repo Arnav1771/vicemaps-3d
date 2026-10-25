@@ -1,0 +1,942 @@
+(() => {
+  // vicemaps-3d/js/config.js
+  var MAP_CONFIG = {
+    // Default camera setting: Vice City (Miami, FL) Downtown & Biscayne Bay
+    defaultLocation: {
+      name: "Vice City (Miami)",
+      center: [-80.188, 25.7725],
+      zoom: 15.8,
+      pitch: 65,
+      bearing: 38,
+      minZoom: 2,
+      maxZoom: 20,
+      maxPitch: 85
+    },
+    // OpenFreeMap Zero-API-Key Vector Tile Style
+    styleUrl: "https://tiles.openfreemap.org/styles/dark",
+    // Fallback style if offline or throttled
+    fallbackRasterTile: "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+    // GTA 6 Neon Dusk Lighting
+    lighting: {
+      anchor: "map",
+      color: "#ff9955",
+      // Warm golden-hour sunset light
+      intensity: 0.65,
+      position: [1.5, 210, 32]
+      // Sun low on southwest horizon
+    },
+    // 3D Building Extrusions Color Ramp
+    building3D: {
+      baseColor: "#0f172a",
+      tallColor: "#00f0ff",
+      // Electric cyan crown for skyscrapers > 120m
+      midColor: "#ff007f",
+      // Neon magenta for towers 60m - 120m
+      lowColor: "#1e293b",
+      // Deep slate for residential/mid-rises
+      opacity: 0.88
+    },
+    // Iconic City Skylines
+    cityBookmarks: [
+      {
+        id: "vice-city",
+        name: "\u{1F334} Vice City (Miami)",
+        center: [-80.188, 25.7725],
+        zoom: 15.8,
+        pitch: 65,
+        bearing: 38,
+        tag: "GTA 6 Setting"
+      },
+      {
+        id: "tokyo",
+        name: "\u{1F5FC} Tokyo (Shibuya & Shinjuku)",
+        center: [139.7006, 35.6895],
+        zoom: 15.6,
+        pitch: 68,
+        bearing: -25,
+        tag: "Neon Metropolis"
+      },
+      {
+        id: "manhattan",
+        name: "\u{1F5FD} New York (Manhattan)",
+        center: [-73.9851, 40.7488],
+        zoom: 15.4,
+        pitch: 68,
+        bearing: 42,
+        tag: "Empire High-Rises"
+      },
+      {
+        id: "dubai",
+        name: "\u{1F3D9}\uFE0F Dubai (Downtown & Burj)",
+        center: [55.2744, 25.1972],
+        zoom: 15.5,
+        pitch: 66,
+        bearing: 55,
+        tag: "Mega Structures"
+      },
+      {
+        id: "paris",
+        name: "\u{1F5FC} Paris (Eiffel & Seine)",
+        center: [2.2945, 48.8584],
+        zoom: 15.6,
+        pitch: 60,
+        bearing: -15,
+        tag: "Historic Capital"
+      }
+    ],
+    // Public OSRM routing endpoint (OpenStreetMap)
+    routingEndpoint: "https://router.project-osrm.org/route/v1/driving"
+  };
+
+  // vicemaps-3d/js/poi-data.js
+  var POI_DATA = [
+    {
+      id: "ocean-drive",
+      title: "Ocean Drive & Art Deco Strip",
+      category: "strip",
+      categoryLabel: "Iconic Strip",
+      icon: "\u{1F334}",
+      color: "#00f0ff",
+      coords: [-80.1305, 25.7825],
+      camera: { zoom: 16.5, pitch: 70, bearing: 6 },
+      description: "The world-famous Art Deco neon avenue running along South Beach. High-density pedestrian buzz, vintage supercars, and pastel facades.",
+      tags: ["Beach", "Neon", "Cruising", "Nightlife"]
+    },
+    {
+      id: "malibu-club",
+      title: "The Malibu Club",
+      category: "nightlife",
+      categoryLabel: "Nightclub",
+      icon: "\u{1F378}",
+      color: "#ff007f",
+      coords: [-80.1328, 25.7905],
+      camera: { zoom: 16.8, pitch: 65, bearing: -30 },
+      description: "The legendary multi-level neon nightclub. Electronic synthwave beats, VIP rooftop lounge, and beachfront cocktail terrace.",
+      tags: ["Nightclub", "Synthwave", "VIP"]
+    },
+    {
+      id: "downtown-towers",
+      title: "Downtown Financial Towers & Skybridge",
+      category: "landmark",
+      categoryLabel: "Skyscrapers",
+      icon: "\u{1F3D9}\uFE0F",
+      color: "#00f0ff",
+      coords: [-80.1905, 25.7715],
+      camera: { zoom: 16, pitch: 74, bearing: 45 },
+      description: "Volumetric glass monoliths towering over the bay. Includes rooftop infinity decks, high-speed elevators, and banking headquarters.",
+      tags: ["Skyscrapers", "Commercial", "3D Architecture"]
+    },
+    {
+      id: "downtown-helipad",
+      title: "Apex Tower Rooftop Helipad",
+      category: "helipad",
+      categoryLabel: "Helipad",
+      icon: "\u{1F681}",
+      color: "#f59e0b",
+      coords: [-80.1872, 25.768],
+      camera: { zoom: 17.2, pitch: 75, bearing: 110 },
+      description: "Private executive rooftop helipad standing 210 meters above Biscayne Bay. Prime launch point for panoramic aerial city flyovers.",
+      tags: ["Aviation", "Helipad", "Skyline View"]
+    },
+    {
+      id: "port-of-vice",
+      title: "Port of Vice City & Mega-Terminal",
+      category: "marina",
+      categoryLabel: "Port & Marina",
+      icon: "\u2693",
+      color: "#10b981",
+      coords: [-80.17, 25.776],
+      camera: { zoom: 15.2, pitch: 62, bearing: -75 },
+      description: "One of the busiest maritime cruise and cargo terminals in the Americas. Massive container gantries, luxury cruise liners, and deep-water docks.",
+      tags: ["Shipping", "Superyachts", "Harbor"]
+    },
+    {
+      id: "venetian-islands",
+      title: "Venetian Causeway & Island Mansions",
+      category: "strip",
+      categoryLabel: "Causeway",
+      icon: "\u{1F309}",
+      color: "#8b5cf6",
+      coords: [-80.16, 25.7905],
+      camera: { zoom: 15.6, pitch: 68, bearing: 82 },
+      description: "Chain of man-made residential barrier islands linked by toll bridges. Waterfront villas with private boat slips and bayfront skyline views.",
+      tags: ["Bridge", "Waterfront", "Speedway"]
+    },
+    {
+      id: "star-island",
+      title: "Star Island Billionaire Enclave",
+      category: "landmark",
+      categoryLabel: "Luxury Estates",
+      icon: "\u{1F3F0}",
+      color: "#f59e0b",
+      coords: [-80.15, 25.778],
+      camera: { zoom: 16.2, pitch: 64, bearing: -40 },
+      description: "Gated celebrity island guarded by private water security. Mega-mansions with helicopter pads, tennis courts, and Biscayne Bay frontage.",
+      tags: ["Exclusive", "Estates", "Gated"]
+    }
+  ];
+
+  // vicemaps-3d/js/map-engine.js
+  var MapEngine = class {
+    constructor(containerId) {
+      this.containerId = containerId;
+      this.map = null;
+      this.markers = [];
+      this.is3DEnabled = true;
+      this.isNeonEnabled = true;
+      this.currentLocation = MAP_CONFIG.defaultLocation;
+    }
+    async init() {
+      return new Promise((resolve) => {
+        this.map = new maplibregl.Map({
+          container: this.containerId,
+          style: MAP_CONFIG.styleUrl,
+          center: this.currentLocation.center,
+          zoom: this.currentLocation.zoom,
+          pitch: this.currentLocation.pitch,
+          bearing: this.currentLocation.bearing,
+          minZoom: MAP_CONFIG.defaultLocation.minZoom,
+          maxZoom: MAP_CONFIG.defaultLocation.maxZoom,
+          maxPitch: MAP_CONFIG.defaultLocation.maxPitch,
+          antialias: true
+        });
+        this.map.on("load", () => {
+          this._setupSkyAndAtmosphere();
+          this._setup3DBuildings();
+          this._setupCustomPOIMarkers();
+          resolve(this);
+        });
+        this.map.on("error", (e) => {
+          if (e && e.error && e.error.message && e.error.message.includes("style")) {
+            console.warn("Vector tile network error; applying resilient fallback:", e.error);
+          }
+        });
+      });
+    }
+    _setupSkyAndAtmosphere() {
+      if (this.map.setSky) {
+        this.map.setSky({
+          "sky-color": "#080816",
+          "sky-horizon-blend": 0.7,
+          "horizon-color": "#ff4444",
+          "horizon-fog-blend": 0.8,
+          "fog-color": "#0d1326",
+          "fog-ground-blend": 0.85
+        });
+      }
+      if (this.map.setLight) {
+        this.map.setLight({
+          anchor: "map",
+          color: "#ffaa66",
+          intensity: 0.65,
+          position: [1.5, 210, 32]
+        });
+      }
+    }
+    _setup3DBuildings() {
+      const layers = this.map.getStyle().layers;
+      let labelLayerId;
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].type === "symbol" && layers[i].layout && layers[i].layout["text-field"]) {
+          labelLayerId = layers[i].id;
+          break;
+        }
+      }
+      const hasBuildingSource = this.map.getSource("openmaptiles");
+      if (hasBuildingSource) {
+        this.map.addLayer(
+          {
+            id: "3d-buildings",
+            source: "openmaptiles",
+            "source-layer": "building",
+            type: "fill-extrusion",
+            minzoom: 14,
+            paint: {
+              "fill-extrusion-color": [
+                "interpolate",
+                ["linear"],
+                ["coalesce", ["get", "render_height"], ["get", "height"], 15],
+                0,
+                "#0d1527",
+                30,
+                "#1e293b",
+                80,
+                "#ff007f",
+                // GTA 6 Neon magenta for high-rises
+                160,
+                "#00f0ff"
+                // Electric cyan for towering skyscrapers
+              ],
+              "fill-extrusion-height": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                14,
+                0,
+                14.5,
+                ["coalesce", ["get", "render_height"], ["get", "height"], 20]
+              ],
+              "fill-extrusion-base": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                14,
+                0,
+                14.5,
+                ["coalesce", ["get", "render_min_height"], ["get", "min_height"], 0]
+              ],
+              "fill-extrusion-opacity": 0.9
+            }
+          },
+          labelLayerId
+        );
+      } else {
+        this._injectProceduralViceCity3DBuildings(labelLayerId);
+      }
+    }
+    _injectProceduralViceCity3DBuildings(beforeLayerId) {
+      const features = [];
+      const baseLng = -80.19;
+      const baseLat = 25.772;
+      for (let i = -7; i <= 7; i++) {
+        for (let j = -7; j <= 7; j++) {
+          const lng = baseLng + i * 22e-4;
+          const lat = baseLat + j * 19e-4;
+          const distFromCenter = Math.sqrt(i * i + j * j);
+          const height = Math.max(25, Math.floor((1 - distFromCenter / 10) * 220 + (i * 13 + j * 7) % 45));
+          const w = 8e-4;
+          const h = 7e-4;
+          features.push({
+            type: "Feature",
+            properties: {
+              height,
+              min_height: 0,
+              name: `Vice Tower ${(i + 8) * 10 + (j + 8)}`
+            },
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [lng - w, lat - h],
+                [lng + w, lat - h],
+                [lng + w, lat + h],
+                [lng - w, lat + h],
+                [lng - w, lat - h]
+              ]]
+            }
+          });
+        }
+      }
+      if (!this.map.getSource("vice-city-3d-source")) {
+        this.map.addSource("vice-city-3d-source", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features
+          }
+        });
+        this.map.addLayer(
+          {
+            id: "3d-buildings-procedural",
+            source: "vice-city-3d-source",
+            type: "fill-extrusion",
+            minzoom: 12,
+            paint: {
+              "fill-extrusion-color": [
+                "interpolate",
+                ["linear"],
+                ["get", "height"],
+                20,
+                "#0d1527",
+                50,
+                "#1e293b",
+                100,
+                "#ff007f",
+                180,
+                "#00f0ff"
+              ],
+              "fill-extrusion-height": ["get", "height"],
+              "fill-extrusion-base": ["get", "min_height"],
+              "fill-extrusion-opacity": 0.88
+            }
+          },
+          beforeLayerId
+        );
+      }
+    }
+    _setupCustomPOIMarkers() {
+      POI_DATA.forEach((poi) => {
+        const el = document.createElement("div");
+        el.className = "gta-marker";
+        el.dataset.id = poi.id;
+        el.innerHTML = `
+        <div class="marker-pulse" style="border-color: ${poi.color}"></div>
+        <div class="marker-badge" style="box-shadow: 0 0 14px ${poi.color}">
+          <span class="marker-icon">${poi.icon}</span>
+        </div>
+        <div class="marker-label">${poi.title}</div>
+      `;
+        const popup = new maplibregl.Popup({ offset: 25, closeButton: false }).setHTML(`
+          <div class="gta-popup">
+            <div class="popup-tag" style="color: ${poi.color}">${poi.categoryLabel}</div>
+            <div class="popup-title">${poi.title}</div>
+            <div class="popup-desc">${poi.description}</div>
+            <div class="popup-btn-wrap">
+              <button class="btn-popup-route" data-coords="${poi.coords[0]},${poi.coords[1]}" data-name="${poi.title}">
+                \u{1F4CD} Set GPS Waypoint
+              </button>
+            </div>
+          </div>
+        `);
+        const marker = new maplibregl.Marker({ element: el }).setLngLat(poi.coords).setPopup(popup).addTo(this.map);
+        this.markers.push(marker);
+        el.addEventListener("click", () => {
+          if (poi.camera) {
+            this.flyTo(poi.coords, poi.camera.zoom, poi.camera.pitch, poi.camera.bearing);
+          }
+        });
+      });
+    }
+    flyTo(center, zoom = 16, pitch = 65, bearing = 38) {
+      this.map.flyTo({
+        center,
+        zoom,
+        pitch,
+        bearing,
+        essential: true,
+        duration: 2500,
+        curve: 1.42
+      });
+    }
+    setPitch(pitch) {
+      this.map.setPitch(pitch);
+    }
+    setBearing(bearing) {
+      this.map.setBearing(bearing);
+    }
+    toggle3D(enabled) {
+      this.is3DEnabled = enabled;
+      const layerIds = ["3d-buildings", "3d-buildings-procedural"];
+      layerIds.forEach((id) => {
+        if (this.map.getLayer(id)) {
+          this.map.setLayoutProperty(id, "visibility", enabled ? "visible" : "none");
+        }
+      });
+    }
+    toggleNeonMode(enabled) {
+      this.isNeonEnabled = enabled;
+      const colorExpr = enabled ? [
+        "interpolate",
+        ["linear"],
+        ["coalesce", ["get", "render_height"], ["get", "height"], 20],
+        20,
+        "#0d1527",
+        50,
+        "#1e293b",
+        100,
+        "#ff007f",
+        180,
+        "#00f0ff"
+      ] : "#334155";
+      ["3d-buildings", "3d-buildings-procedural"].forEach((id) => {
+        if (this.map.getLayer(id)) {
+          this.map.setPaintProperty(id, "fill-extrusion-color", colorExpr);
+        }
+      });
+    }
+  };
+
+  // vicemaps-3d/js/routing.js
+  var RoutingEngine = class {
+    constructor(mapInstance) {
+      this.mapInstance = mapInstance;
+      this.map = mapInstance.map;
+      this.currentRoute = null;
+      this.animationFrameId = null;
+      this.dashOffset = 0;
+    }
+    async calculateRoute(startCoords, endCoords, destinationName = "Custom Waypoint") {
+      const url = `${MAP_CONFIG.routingEndpoint}/${startCoords[0]},${startCoords[1]};${endCoords[0]},${endCoords[1]}?overview=full&geometries=geojson&steps=true`;
+      try {
+        const resp = await fetch(url, { signal: AbortSignal.timeout(6e3) });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (!data.routes || !data.routes.length) throw new Error("No route found");
+        const route = data.routes[0];
+        const distanceMiles = (route.distance / 1609.34).toFixed(1);
+        const durationMins = Math.ceil(route.duration / 60);
+        const routeData = {
+          coordinates: route.geometry.coordinates,
+          distance: `${distanceMiles} MI`,
+          duration: `${durationMins} MIN`,
+          destinationName,
+          steps: route.legs[0] && route.legs[0].steps || []
+        };
+        this.displayRoute(routeData);
+        return routeData;
+      } catch (err) {
+        console.warn("OSRM network routing fallback invoked:", err);
+        return this._generateProceduralRoute(startCoords, endCoords, destinationName);
+      }
+    }
+    _generateProceduralRoute(start, end, destinationName) {
+      const coords = [start];
+      const midLat = start[1] + (end[1] - start[1]) * 0.45;
+      const midLng = start[0] + (end[0] - start[0]) * 0.55;
+      coords.push([start[0], midLat]);
+      coords.push([midLng, midLat]);
+      coords.push([midLng, end[1]]);
+      coords.push(end);
+      const distanceMiles = (Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2)) * 69).toFixed(1);
+      const durationMins = Math.max(3, Math.ceil(distanceMiles * 1.8));
+      const routeData = {
+        coordinates: coords,
+        distance: `${distanceMiles} MI`,
+        duration: `${durationMins} MIN`,
+        destinationName,
+        steps: [
+          { maneuver: { instruction: "Head north on Grand Avenue", modifier: "straight" } },
+          { maneuver: { instruction: "Turn right onto Ocean Boulevard", modifier: "right" } },
+          { maneuver: { instruction: "Arrive at destination on right", modifier: "arrive" } }
+        ]
+      };
+      this.displayRoute(routeData);
+      return routeData;
+    }
+    displayRoute(routeData) {
+      this.clearRoute();
+      this.currentRoute = routeData;
+      const geojsonData = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: routeData.coordinates
+        }
+      };
+      this.map.addSource("gps-route-source", {
+        type: "geojson",
+        data: geojsonData
+      });
+      this.map.addLayer({
+        id: "gps-route-glow",
+        type: "line",
+        source: "gps-route-source",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round"
+        },
+        paint: {
+          "line-color": "#ff007f",
+          "line-width": 14,
+          "line-opacity": 0.75,
+          "line-blur": 6
+        }
+      });
+      this.map.addLayer({
+        id: "gps-route-core",
+        type: "line",
+        source: "gps-route-source",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round"
+        },
+        paint: {
+          "line-color": "#00f0ff",
+          "line-width": 5,
+          "line-opacity": 0.95
+        }
+      });
+      this.map.addLayer({
+        id: "gps-route-pulse",
+        type: "line",
+        source: "gps-route-source",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round"
+        },
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": 2.5,
+          "line-dasharray": [1, 3]
+        }
+      });
+      this._startDashAnimation();
+      this._fitRouteBounds(routeData.coordinates);
+    }
+    _startDashAnimation() {
+      let step = 0;
+      const animate = () => {
+        step = (step + 0.1) % 4;
+        if (this.map.getLayer("gps-route-pulse")) {
+          this.map.setPaintProperty("gps-route-pulse", "line-dasharray", [
+            step,
+            Math.max(0.1, 4 - step)
+          ]);
+          this.animationFrameId = requestAnimationFrame(animate);
+        }
+      };
+      this.animationFrameId = requestAnimationFrame(animate);
+    }
+    _fitRouteBounds(coords) {
+      if (!coords || !coords.length) return;
+      const bounds = coords.reduce(
+        (b, coord) => b.extend(coord),
+        new maplibregl.LngLatBounds(coords[0], coords[0])
+      );
+      this.map.fitBounds(bounds, {
+        padding: { top: 120, bottom: 120, left: 160, right: 160 },
+        pitch: 62,
+        bearing: 35,
+        duration: 2e3,
+        maxZoom: 16.5
+      });
+    }
+    clearRoute() {
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+        this.animationFrameId = null;
+      }
+      const layers = ["gps-route-pulse", "gps-route-core", "gps-route-glow"];
+      layers.forEach((id) => {
+        if (this.map.getLayer(id)) this.map.removeLayer(id);
+      });
+      if (this.map.getSource("gps-route-source")) {
+        this.map.removeSource("gps-route-source");
+      }
+      this.currentRoute = null;
+    }
+  };
+
+  // vicemaps-3d/js/cinematic.js
+  var CinematicController = class {
+    constructor(mapInstance) {
+      this.mapInstance = mapInstance;
+      this.map = mapInstance.map;
+      this.isPlaying = false;
+      this.tourFrameId = null;
+      this.currentBearing = 38;
+    }
+    startTour() {
+      if (this.isPlaying) return;
+      this.isPlaying = true;
+      this.currentBearing = this.map.getBearing();
+      document.body.classList.add("cinematic-mode");
+      this.map.easeTo({
+        pitch: 74,
+        zoom: 16.2,
+        duration: 2e3
+      });
+      const rotate = () => {
+        if (!this.isPlaying) return;
+        this.currentBearing = (this.currentBearing + 0.12) % 360;
+        this.map.setBearing(this.currentBearing);
+        this.tourFrameId = requestAnimationFrame(rotate);
+      };
+      setTimeout(() => {
+        if (this.isPlaying) {
+          this.tourFrameId = requestAnimationFrame(rotate);
+        }
+      }, 1800);
+    }
+    stopTour() {
+      this.isPlaying = false;
+      if (this.tourFrameId) {
+        cancelAnimationFrame(this.tourFrameId);
+        this.tourFrameId = null;
+      }
+      document.body.classList.remove("cinematic-mode");
+    }
+    toggle() {
+      if (this.isPlaying) {
+        this.stopTour();
+      } else {
+        this.startTour();
+      }
+      return this.isPlaying;
+    }
+  };
+
+  // vicemaps-3d/js/street-roam.js
+  var StreetRoamController = class {
+    constructor(mapInstance) {
+      this.mapInstance = mapInstance;
+      this.map = mapInstance.map;
+      this.isActive = false;
+      this.keys = {};
+      this.speedMph = 0;
+      this.maxSpeed = 95;
+      this.loopId = null;
+      this.onSpeedUpdate = null;
+      this._bindEvents();
+    }
+    _bindEvents() {
+      window.addEventListener("keydown", (e) => {
+        if (!this.isActive) return;
+        if (["KeyW", "KeyA", "KeyS", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+          this.keys[e.code] = true;
+        }
+        if (e.code === "Escape") {
+          this.stop();
+        }
+      });
+      window.addEventListener("keyup", (e) => {
+        if (!this.isActive) return;
+        this.keys[e.code] = false;
+      });
+    }
+    start(onSpeedCallback) {
+      if (this.isActive) return;
+      this.isActive = true;
+      this.onSpeedUpdate = onSpeedCallback;
+      document.body.classList.add("street-roam-active");
+      this.map.easeTo({
+        pitch: 82,
+        zoom: 17.4,
+        duration: 1500
+      });
+      this._startPhysicsLoop();
+    }
+    stop() {
+      this.isActive = false;
+      this.speedMph = 0;
+      this.keys = {};
+      if (this.loopId) {
+        cancelAnimationFrame(this.loopId);
+        this.loopId = null;
+      }
+      document.body.classList.remove("street-roam-active");
+      this.map.easeTo({
+        pitch: 65,
+        zoom: 15.8,
+        duration: 1500
+      });
+      if (this.onSpeedUpdate) {
+        this.onSpeedUpdate(0);
+      }
+    }
+    toggle(callback) {
+      if (this.isActive) {
+        this.stop();
+      } else {
+        this.start(callback);
+      }
+      return this.isActive;
+    }
+    _startPhysicsLoop() {
+      const loop = () => {
+        if (!this.isActive) return;
+        const isAccel = this.keys["KeyW"] || this.keys["ArrowUp"];
+        const isBrake = this.keys["KeyS"] || this.keys["ArrowDown"];
+        const isLeft = this.keys["KeyA"] || this.keys["ArrowLeft"];
+        const isRight = this.keys["KeyD"] || this.keys["ArrowRight"];
+        if (isAccel) {
+          this.speedMph = Math.min(this.maxSpeed, this.speedMph + 1.2);
+        } else if (isBrake) {
+          this.speedMph = Math.max(-20, this.speedMph - 2);
+        } else {
+          if (this.speedMph > 0) this.speedMph = Math.max(0, this.speedMph - 0.5);
+          if (this.speedMph < 0) this.speedMph = Math.min(0, this.speedMph + 0.5);
+        }
+        let bearing = this.map.getBearing();
+        const steerFactor = Math.min(1.5, Math.abs(this.speedMph) / 25);
+        if (isLeft) bearing -= 1.8 * steerFactor;
+        if (isRight) bearing += 1.8 * steerFactor;
+        const center = this.map.getCenter();
+        const rad = bearing * Math.PI / 180;
+        const stepDist = this.speedMph * 35e-7;
+        const newLng = center.lng + Math.sin(rad) * stepDist;
+        const newLat = center.lat + Math.cos(rad) * stepDist;
+        this.map.setBearing(bearing);
+        this.map.setCenter([newLng, newLat]);
+        if (this.onSpeedUpdate) {
+          this.onSpeedUpdate(Math.round(this.speedMph));
+        }
+        this.loopId = requestAnimationFrame(loop);
+      };
+      this.loopId = requestAnimationFrame(loop);
+    }
+  };
+
+  // vicemaps-3d/js/app.js
+  (async function() {
+    "use strict";
+    const mapEngine = new MapEngine("map");
+    await mapEngine.init();
+    const routingEngine = new RoutingEngine(mapEngine);
+    const cinematicCtrl = new CinematicController(mapEngine);
+    const streetRoamCtrl = new StreetRoamController(mapEngine);
+    const searchInput = document.getElementById("search-input");
+    const searchSuggestions = document.getElementById("search-suggestions");
+    const categoryFilters = document.getElementById("category-filters");
+    const routeHud = document.getElementById("route-hud");
+    const routeDestName = document.getElementById("route-dest-name");
+    const routeDistance = document.getElementById("route-distance");
+    const routeDuration = document.getElementById("route-duration");
+    const routeManeuver = document.getElementById("route-maneuver");
+    const btnCancelRoute = document.getElementById("btn-cancel-route");
+    const btnToggle3D = document.getElementById("btn-toggle-3d");
+    const btnToggleNeon = document.getElementById("btn-toggle-neon");
+    const btnCinematic = document.getElementById("btn-cinematic");
+    const btnStreetRoam = document.getElementById("btn-street-roam");
+    const streetHud = document.getElementById("street-hud");
+    const speedometerVal = document.getElementById("speedometer-val");
+    const pitchSlider = document.getElementById("pitch-slider");
+    const pitchValText = document.getElementById("pitch-val-text");
+    const citySelect = document.getElementById("city-select");
+    const telemetryCoords = document.getElementById("telemetry-coords");
+    const telemetryHeading = document.getElementById("telemetry-heading");
+    const telemetryZoom = document.getElementById("telemetry-zoom");
+    MAP_CONFIG.cityBookmarks.forEach((city) => {
+      const opt = document.createElement("option");
+      opt.value = city.id;
+      opt.textContent = `${city.name} (${city.tag})`;
+      citySelect.appendChild(opt);
+    });
+    citySelect.addEventListener("change", (e) => {
+      const selected = MAP_CONFIG.cityBookmarks.find((c) => c.id === e.target.value);
+      if (selected) {
+        mapEngine.flyTo(selected.center, selected.zoom, selected.pitch, selected.bearing);
+      }
+    });
+    mapEngine.map.on("move", () => {
+      const center = mapEngine.map.getCenter();
+      const pitch = Math.round(mapEngine.map.getPitch());
+      const bearing = Math.round((mapEngine.map.getBearing() + 360) % 360);
+      const zoom = mapEngine.map.getZoom().toFixed(1);
+      if (telemetryCoords) {
+        telemetryCoords.textContent = `${center.lat.toFixed(4)}\xB0N, ${Math.abs(center.lng).toFixed(4)}\xB0W`;
+      }
+      if (telemetryHeading) {
+        telemetryHeading.textContent = `${bearing}\xB0 (PITCH ${pitch}\xB0)`;
+      }
+      if (telemetryZoom) {
+        telemetryZoom.textContent = `Z${zoom}`;
+      }
+      if (pitchSlider) {
+        pitchSlider.value = pitch;
+        pitchValText.textContent = `${pitch}\xB0`;
+      }
+    });
+    pitchSlider.addEventListener("input", (e) => {
+      const val = parseFloat(e.target.value);
+      mapEngine.setPitch(val);
+      pitchValText.textContent = `${val}\xB0`;
+    });
+    btnToggle3D.addEventListener("click", () => {
+      const active = btnToggle3D.classList.toggle("active");
+      mapEngine.toggle3D(active);
+    });
+    btnToggleNeon.addEventListener("click", () => {
+      const active = btnToggleNeon.classList.toggle("active");
+      mapEngine.toggleNeonMode(active);
+    });
+    btnCinematic.addEventListener("click", () => {
+      const isPlaying = cinematicCtrl.toggle();
+      btnCinematic.classList.toggle("active", isPlaying);
+      btnCinematic.textContent = isPlaying ? "\u23F9\uFE0F Exit Tour" : "\u{1F3AC} Cinematic Tour";
+    });
+    btnStreetRoam.addEventListener("click", () => {
+      const isRoaming = streetRoamCtrl.toggle((speed) => {
+        if (speedometerVal) speedometerVal.textContent = Math.abs(speed);
+      });
+      btnStreetRoam.classList.toggle("active", isRoaming);
+      btnStreetRoam.textContent = isRoaming ? "\u23F9\uFE0F Exit Roam" : "\u{1F3CE}\uFE0F Street Roam";
+      streetHud.classList.toggle("hidden", !isRoaming);
+    });
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        searchSuggestions.classList.add("hidden");
+        return;
+      }
+      const matches = POI_DATA.filter(
+        (p) => p.title.toLowerCase().includes(q) || p.categoryLabel.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+      );
+      if (!matches.length) {
+        searchSuggestions.innerHTML = `<div class="search-item empty">No matching landmarks in Vice City</div>`;
+        searchSuggestions.classList.remove("hidden");
+        return;
+      }
+      searchSuggestions.innerHTML = matches.map((m) => `
+      <div class="search-item" data-coords="${m.coords[0]},${m.coords[1]}" data-title="${m.title}">
+        <span class="search-icon">${m.icon}</span>
+        <div class="search-info">
+          <div class="search-title">${m.title}</div>
+          <div class="search-cat">${m.categoryLabel} \u2022 ${m.tags.join(", ")}</div>
+        </div>
+      </div>
+    `).join("");
+      searchSuggestions.classList.remove("hidden");
+      searchSuggestions.querySelectorAll(".search-item:not(.empty)").forEach((item) => {
+        item.addEventListener("click", () => {
+          const coords = item.dataset.coords.split(",").map(Number);
+          const title = item.dataset.title;
+          searchInput.value = title;
+          searchSuggestions.classList.add("hidden");
+          mapEngine.flyTo(coords, 16.5, 68, 30);
+          triggerRoute(coords, title);
+        });
+      });
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-box-wrap")) {
+        searchSuggestions.classList.add("hidden");
+      }
+    });
+    categoryFilters.querySelectorAll(".cat-pill").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        categoryFilters.querySelectorAll(".cat-pill").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const cat = btn.dataset.cat;
+        if (cat === "all") {
+          mapEngine.markers.forEach((m) => m.getElement().style.display = "block");
+        } else {
+          POI_DATA.forEach((p, idx) => {
+            const visible = p.category === cat;
+            if (mapEngine.markers[idx]) {
+              mapEngine.markers[idx].getElement().style.display = visible ? "block" : "none";
+            }
+          });
+        }
+      });
+    });
+    document.addEventListener("click", (e) => {
+      const routeBtn = e.target.closest(".btn-popup-route");
+      if (routeBtn) {
+        const coords = routeBtn.dataset.coords.split(",").map(Number);
+        const name = routeBtn.dataset.name;
+        triggerRoute(coords, name);
+      }
+    });
+    async function triggerRoute(destCoords, destName) {
+      const originCoords = [-80.1918, 25.7617];
+      routeHud.classList.remove("hidden");
+      routeDestName.textContent = `Destination: ${destName}`;
+      routeDistance.textContent = "Calculating...";
+      routeDuration.textContent = "...";
+      const route = await routingEngine.calculateRoute(originCoords, destCoords, destName);
+      if (route) {
+        routeDistance.textContent = route.distance;
+        routeDuration.textContent = route.duration;
+        if (route.steps.length && route.steps[0].maneuver) {
+          routeManeuver.textContent = route.steps[0].maneuver.instruction || "Follow highlighted neon road";
+        }
+      }
+    }
+    btnCancelRoute.addEventListener("click", () => {
+      routingEngine.clearRoute();
+      routeHud.classList.add("hidden");
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT") return;
+      if (e.code === "KeyR") {
+        btnStreetRoam.click();
+      } else if (e.code === "KeyC") {
+        btnCinematic.click();
+      } else if (e.code === "KeyN") {
+        btnToggleNeon.click();
+      }
+    });
+    console.log("\u26A1 ViceMaps 3D Engine Initialized \xB7 GTA 6 Neon Dusk Theme");
+  })();
+})();
