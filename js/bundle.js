@@ -39,6 +39,15 @@
     // Iconic City Skylines
     cityBookmarks: [
       {
+        id: "delhi-pholram",
+        name: "\u{1F1EE}\u{1F1F3} Pholram Park (Delhi)",
+        center: [77.1273, 28.6867],
+        zoom: 16.8,
+        pitch: 65,
+        bearing: 24,
+        tag: "Pitampura / Rishi Nagar"
+      },
+      {
         id: "miami",
         name: "\u{1F334} Miami (Biscayne Bay)",
         center: [-80.188, 25.7725],
@@ -173,6 +182,18 @@
       camera: { zoom: 16.3, pitch: 68, bearing: -120 },
       description: "Integrated resort complex featuring three 55-story hotel towers topped by a cantilevered SkyPark and infinite waterfront promenade.",
       tags: ["Singapore", "Hotel", "Resort", "Waterfront"]
+    },
+    {
+      id: "pholram-park",
+      title: "Pholram Park (Rishi Nagar, Delhi)",
+      category: "sights",
+      categoryLabel: "Public Green Park",
+      icon: "\u{1F333}",
+      color: "#10b981",
+      coords: [77.1273, 28.6867],
+      camera: { zoom: 16.8, pitch: 65, bearing: 24 },
+      description: "Public neighborhood park and green space located in the Rishi Nagar / Pitampura district of North West Delhi, India.",
+      tags: ["India", "Delhi", "Pitampura", "Rishi Nagar", "Park", "Pholram"]
     }
   ];
 
@@ -825,6 +846,7 @@
     "use strict";
     const mapEngine = new MapEngine("map");
     await mapEngine.init();
+    window.mapEngineInstance = mapEngine;
     const routingEngine = new RoutingEngine(mapEngine);
     const cinematicCtrl = new CinematicController(mapEngine);
     const streetRoamCtrl = new StreetRoamController(mapEngine);

@@ -16,6 +16,7 @@ import { StreetRoamController } from './street-roam.js';
   // Instantiate Core Modules
   const mapEngine = new MapEngine('map');
   await mapEngine.init();
+  window.mapEngineInstance = mapEngine;
 
   const routingEngine = new RoutingEngine(mapEngine);
   const cinematicCtrl = new CinematicController(mapEngine);

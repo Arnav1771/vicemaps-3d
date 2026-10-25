@@ -87,5 +87,17 @@ export const POI_DATA = [
     camera: { zoom: 16.3, pitch: 68, bearing: -120 },
     description: "Integrated resort complex featuring three 55-story hotel towers topped by a cantilevered SkyPark and infinite waterfront promenade.",
     tags: ["Singapore", "Hotel", "Resort", "Waterfront"]
+  },
+  {
+    id: "pholram-park",
+    title: "Pholram Park (Rishi Nagar, Delhi)",
+    category: "sights",
+    categoryLabel: "Public Green Park",
+    icon: "🌳",
+    color: "#10b981",
+    coords: [77.1273, 28.6867],
+    camera: { zoom: 16.8, pitch: 65, bearing: 24 },
+    description: "Public neighborhood park and green space located in the Rishi Nagar / Pitampura district of North West Delhi, India.",
+    tags: ["India", "Delhi", "Pitampura", "Rishi Nagar", "Park", "Pholram"]
   }
 ];
