@@ -422,6 +422,69 @@
         }
       });
     }
+    setLightingPreset(mode) {
+      if (!this.map.setLight) return;
+      const presets = {
+        golden: {
+          anchor: "map",
+          color: "#FFBC70",
+          // Warm golden-hour sunlight
+          intensity: 0.65,
+          position: [1.5, 210, 32]
+          // 210° azimuth, 32° altitude
+        },
+        daylight: {
+          anchor: "map",
+          color: "#FFFFFF",
+          // Crisp neutral daylight
+          intensity: 0.85,
+          position: [1.5, 180, 65]
+        },
+        bluehour: {
+          anchor: "map",
+          color: "#4860FF",
+          // Blue hour cool ambient
+          intensity: 0.48,
+          position: [1.5, 260, 10]
+        },
+        night: {
+          anchor: "map",
+          color: "#18232F",
+          // Moonlit dark night
+          intensity: 0.28,
+          position: [1.5, 0, 90]
+        }
+      };
+      const cfg = presets[mode] || presets.golden;
+      this.map.setLight(cfg);
+    }
+    toggle2D3D() {
+      const currentPitch = this.map.getPitch();
+      const targetPitch = currentPitch > 25 ? 0 : 65;
+      this.map.easeTo({
+        pitch: targetPitch,
+        duration: 1e3
+      });
+      return targetPitch > 25;
+    }
+    zoomIn() {
+      this.map.zoomIn({ duration: 400 });
+    }
+    zoomOut() {
+      this.map.zoomOut({ duration: 400 });
+    }
+    resetNorth() {
+      this.map.easeTo({
+        bearing: 0,
+        duration: 800
+      });
+    }
+    calculateAltitudeMeters() {
+      const zoom = this.map.getZoom();
+      const earthCircumference = 40075016686e-3;
+      const altitude = earthCircumference * Math.cos(this.map.getCenter().lat * Math.PI / 180) / Math.pow(2, zoom + 8);
+      return Math.max(12, Math.round(altitude * 100));
+    }
     toggleNeonMode(enabled) {
       this.isNeonEnabled = enabled;
       const colorExpr = enabled ? [
@@ -838,11 +901,15 @@
         mapEngine.flyTo(selected.center, selected.zoom, selected.pitch, selected.bearing);
       }
     });
+    const telemetryAltitude = document.getElementById("telemetry-altitude");
+    const compassNeedle = document.getElementById("compass-needle");
+    const compassHeadingText = document.getElementById("compass-heading-text");
     mapEngine.map.on("move", () => {
       const center = mapEngine.map.getCenter();
       const pitch = Math.round(mapEngine.map.getPitch());
       const bearing = Math.round((mapEngine.map.getBearing() + 360) % 360);
       const zoom = mapEngine.map.getZoom().toFixed(1);
+      const alt = mapEngine.calculateAltitudeMeters();
       if (telemetryCoords) {
         telemetryCoords.textContent = `${center.lat.toFixed(4)}\xB0N, ${Math.abs(center.lng).toFixed(4)}\xB0W`;
       }
@@ -852,10 +919,97 @@
       if (telemetryZoom) {
         telemetryZoom.textContent = `Z${zoom}`;
       }
+      if (telemetryAltitude) {
+        telemetryAltitude.textContent = `${alt} M`;
+      }
+      if (compassHeadingText) {
+        compassHeadingText.textContent = `${bearing}\xB0 N`;
+      }
+      if (compassNeedle) {
+        compassNeedle.style.transform = `rotate(${-bearing}deg)`;
+      }
       if (pitchSlider) {
         pitchSlider.value = pitch;
         pitchValText.textContent = `${pitch}\xB0`;
       }
+    });
+    let frameCount = 0;
+    let lastFpsTime = performance.now();
+    const fpsElement = document.getElementById("telemetry-fps");
+    function measureFps() {
+      frameCount++;
+      const now = performance.now();
+      if (now - lastFpsTime >= 1e3) {
+        const fps = Math.round(frameCount * 1e3 / (now - lastFpsTime));
+        if (fpsElement) {
+          fpsElement.textContent = `${fps} FPS`;
+        }
+        frameCount = 0;
+        lastFpsTime = now;
+      }
+      requestAnimationFrame(measureFps);
+    }
+    requestAnimationFrame(measureFps);
+    const railExplore = document.getElementById("rail-explore");
+    const railPlaces = document.getElementById("rail-places");
+    const railDirections = document.getElementById("rail-directions");
+    const railLayers = document.getElementById("rail-layers");
+    const railLocation = document.getElementById("rail-location");
+    const railSaved = document.getElementById("rail-saved");
+    const railSettings = document.getElementById("rail-settings");
+    function activateRail(btn) {
+      document.querySelectorAll(".rail-btn").forEach((b) => b.classList.remove("active"));
+      btn?.classList.add("active");
+    }
+    railExplore?.addEventListener("click", () => {
+      activateRail(railExplore);
+      mapEngine.flyTo(MAP_CONFIG.defaultLocation.center, 15.8, 65, 38);
+    });
+    railPlaces?.addEventListener("click", () => {
+      activateRail(railPlaces);
+      const randomPoi = POI_DATA[Math.floor(Math.random() * POI_DATA.length)];
+      if (randomPoi) mapEngine.flyTo(randomPoi.coords, randomPoi.camera.zoom, randomPoi.camera.pitch, randomPoi.camera.bearing);
+    });
+    railDirections?.addEventListener("click", () => {
+      activateRail(railDirections);
+      routeHud.classList.remove("hidden");
+    });
+    railLayers?.addEventListener("click", () => {
+      activateRail(railLayers);
+      btnToggle3D.click();
+    });
+    railLocation?.addEventListener("click", () => {
+      activateRail(railLocation);
+      btnGpsLocate?.click();
+    });
+    const btnZoomIn = document.getElementById("btn-zoom-in");
+    const btnZoomOut = document.getElementById("btn-zoom-out");
+    const btnToggle2d3d = document.getElementById("btn-toggle-2d3d");
+    const btnResetNorth = document.getElementById("btn-reset-north");
+    btnZoomIn?.addEventListener("click", () => mapEngine.zoomIn());
+    btnZoomOut?.addEventListener("click", () => mapEngine.zoomOut());
+    btnResetNorth?.addEventListener("click", () => mapEngine.resetNorth());
+    btnToggle2d3d?.addEventListener("click", () => {
+      const is3D = mapEngine.toggle2D3D();
+      btnToggle2d3d.textContent = is3D ? "3D" : "2D";
+    });
+    const lightingModeLabel = document.getElementById("lighting-mode-label");
+    const telemetryLighting = document.getElementById("telemetry-lighting");
+    document.querySelectorAll(".lighting-pill-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".lighting-pill-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const mode = btn.dataset.light;
+        mapEngine.setLightingPreset(mode);
+        const labels = {
+          golden: "GOLDEN HOUR \xB7 210\xB0",
+          daylight: "DAYLIGHT \xB7 180\xB0",
+          bluehour: "BLUE HOUR \xB7 260\xB0",
+          night: "NIGHT ILLUMINATION"
+        };
+        if (lightingModeLabel) lightingModeLabel.textContent = mode.toUpperCase();
+        if (telemetryLighting) telemetryLighting.textContent = labels[mode] || mode.toUpperCase();
+      });
     });
     pitchSlider.addEventListener("input", (e) => {
       const val = parseFloat(e.target.value);

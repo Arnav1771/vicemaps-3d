@@ -24,15 +24,50 @@
   <!-- Fullscreen 3D Map Container -->
   <div id="map"></div>
 
+  <!-- Floating Left-Side Tool Rail (Section 3.B) -->
+  <aside class="glass-panel left-tool-rail" id="left-tool-rail">
+    <button class="rail-btn active" id="rail-explore" title="Explore">
+      <span>🧭</span>
+      <span class="rail-tooltip">Explore 3D Earth</span>
+    </button>
+    <button class="rail-btn" id="rail-places" title="Places">
+      <span>📍</span>
+      <span class="rail-tooltip">Curated Landmarks</span>
+    </button>
+    <button class="rail-btn" id="rail-directions" title="Directions">
+      <span>↗️</span>
+      <span class="rail-tooltip">GPS Navigation</span>
+    </button>
+    <button class="rail-btn" id="rail-layers" title="Layers">
+      <span>🗺️</span>
+      <span class="rail-tooltip">Map Layers & 3D</span>
+    </button>
+    <div class="rail-divider"></div>
+    <button class="rail-btn" id="rail-location" title="My Location">
+      <span>🎯</span>
+      <span class="rail-tooltip">My GPS Location</span>
+    </button>
+    <button class="rail-btn" id="rail-saved" title="Saved Places">
+      <span>⭐</span>
+      <span class="rail-tooltip">Saved Places</span>
+    </button>
+    <button class="rail-btn" id="rail-settings" title="Settings">
+      <span>⚙️</span>
+      <span class="rail-tooltip">Engine Settings</span>
+    </button>
+  </aside>
+
   <!-- 1. Top HUD Bar -->
   <header class="top-hud">
     <!-- Brand Badge -->
     <div class="glass-panel brand-badge">
       <div class="brand-logo-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-          <line x1="8" y1="2" x2="8" y2="18"></line>
-          <line x1="16" y1="6" x2="16" y2="22"></line>
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3.6 9h16.8"></path>
+          <path d="M3.6 15h16.8"></path>
+          <path d="M11.5 3a17 17 0 0 0 0 18"></path>
+          <path d="M12.5 3a17 17 0 0 1 0 18"></path>
         </svg>
       </div>
       <div class="brand-text">
@@ -41,14 +76,14 @@
       </div>
     </div>
 
-    <!-- Search Bar with Autocomplete Suggestions -->
+    <!-- Search Bar with Autocomplete Suggestions (Section 3.A) -->
     <div class="search-box-wrap">
       <div class="glass-panel search-input-box">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="search-input" placeholder="Search any city, street, restaurant, or landmark worldwide..." autocomplete="off">
+        <input type="text" id="search-input" placeholder="Search anywhere on Earth…" autocomplete="off">
         <button id="btn-gps-locate" class="btn-gps-inline" title="Center on My Real-Time GPS Location">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
@@ -75,13 +110,13 @@
     <button class="cat-pill" data-cat="sights">🏛️ Sights & Culture</button>
   </nav>
 
-  <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card -->
+  <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card (Section 3.E) -->
   <aside class="glass-panel route-hud hidden" id="route-hud">
     <div class="route-hud-header">
       <span class="route-tag">GPS WAYPOINT ACTIVE</span>
       <button class="btn-icon-close" id="btn-cancel-route" title="Cancel Route">✕</button>
     </div>
-    <div class="route-dest-title" id="route-dest-name">Destination: Ocean Drive</div>
+    <div class="route-dest-title" id="route-dest-name">Destination: Times Square</div>
     <div class="route-metrics-row">
       <div class="metric-item">
         <span class="metric-label">Distance</span>
@@ -98,17 +133,41 @@
     </div>
   </aside>
 
-  <!-- 3. Right Floating Controls Dock -->
+  <!-- 3. Right Floating Controls Dock (Section 3.C) -->
   <aside class="controls-dock">
+    <!-- Compass & Heading -->
+    <div class="compass-dial-wrap" id="btn-reset-north" title="Click to Reset North">
+      <span class="compass-dial-icon" id="compass-needle">🧭</span>
+      <span class="compass-heading-val" id="compass-heading-text">38° N</span>
+    </div>
+
+    <!-- Zoom & 2D/3D Perspective -->
+    <div class="zoom-controls-row">
+      <button class="btn-zoom" id="btn-zoom-in" title="Zoom In">+</button>
+      <button class="btn-zoom" id="btn-zoom-out" title="Zoom Out">-</button>
+      <button class="btn-zoom" id="btn-toggle-2d3d" title="Toggle 2D/3D Perspective">3D</button>
+    </div>
+
     <button class="dock-btn active" id="btn-toggle-3d" title="Toggle 3D Buildings">
       <span>🏢 3D Buildings</span>
       <span class="btn-indicator">ON</span>
     </button>
-    <button class="dock-btn active" id="btn-toggle-neon" title="Toggle Dusk Sunset Lighting">
-      <span>🌆 Sunset Dusk</span>
-      <span class="btn-indicator">ON</span>
-    </button>
-    <button class="dock-btn" id="btn-cinematic" title="Camera Orbit Cinematic Tour (Hotkey: C)">
+
+    <!-- Lighting Presets (Section 4) -->
+    <div class="dock-slider-box">
+      <div class="slider-label-row">
+        <span>Lighting Preset</span>
+        <span class="slider-val-tag" id="lighting-mode-label">DUSK</span>
+      </div>
+      <div class="lighting-presets-bar">
+        <button class="lighting-pill-btn active" data-light="golden" title="Golden Hour (210° az, 32° alt)">🌅 Gold</button>
+        <button class="lighting-pill-btn" data-light="daylight" title="Daylight (180° az, 65° alt)">☀️ Day</button>
+        <button class="lighting-pill-btn" data-light="bluehour" title="Blue Hour (260° az, 10° alt)">🌆 Blue</button>
+        <button class="lighting-pill-btn" data-light="night" title="Night Illumination">🌙 Night</button>
+      </div>
+    </div>
+
+    <button class="dock-btn" id="btn-cinematic" title="Camera Orbit Cinematic Flyover (Hotkey: C)">
       <span>🎬 360° Flyover</span>
     </button>
     <button class="dock-btn" id="btn-street-roam" title="First-Person Street View Roam (Hotkey: R)">
@@ -124,19 +183,19 @@
     </div>
   </aside>
 
-  <!-- 4. Street Roam HUD Overlay (Speedometer & Controls) -->
+  <!-- 4. Street Roam HUD Overlay (Speedometer & Controls - Section 5) -->
   <div class="glass-panel street-roam-hud hidden" id="street-hud">
     <div class="speedometer-wrap">
       <span class="speedometer-num" id="speedometer-val">0</span>
       <span class="speedometer-unit">MPH</span>
     </div>
     <div class="roam-controls-hint">
-      Drive: <span class="roam-key">W</span> <span class="roam-key">S</span> | Steer: <span class="roam-key">A</span> <span class="roam-key">D</span> or Arrow Keys<br>
-      Press <span class="roam-key">R</span> or click button to exit Street Roam
+      Move: <span class="roam-key">W</span> <span class="roam-key">S</span> | Turn: <span class="roam-key">A</span> <span class="roam-key">D</span> or Arrow Keys<br>
+      Press <span class="roam-key">R</span> or click Street View button to exit
     </div>
   </div>
 
-  <!-- 5. Bottom Telemetry Ticker -->
+  <!-- 5. Bottom Telemetry Ticker (Section 3.D) -->
   <footer class="glass-panel bottom-telemetry-bar">
     <div class="telemetry-left">
       <div class="telemetry-item">
@@ -148,6 +207,10 @@
         <span class="telemetry-val" id="telemetry-heading">38° (PITCH 65°)</span>
       </div>
       <div class="telemetry-item">
+        <span class="telemetry-lbl">ALTITUDE:</span>
+        <span class="telemetry-val" id="telemetry-altitude">420 M</span>
+      </div>
+      <div class="telemetry-item">
         <span class="telemetry-lbl">SCALE:</span>
         <span class="telemetry-val" id="telemetry-zoom">Z15.6</span>
       </div>
@@ -155,11 +218,15 @@
     <div class="telemetry-right">
       <div class="telemetry-item">
         <span class="telemetry-lbl">LIGHTING:</span>
-        <span class="telemetry-val">VICE CITY SUNSET · 210°</span>
+        <span class="telemetry-val" id="telemetry-lighting">GOLDEN HOUR · 210°</span>
       </div>
       <div class="telemetry-item">
-        <span class="telemetry-lbl">ENGINE:</span>
-        <span class="telemetry-val fps-badge">60 FPS · MAPLIBRE 3D</span>
+        <span class="telemetry-lbl">PERF:</span>
+        <span class="telemetry-val fps-badge" id="telemetry-fps">60 FPS</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="telemetry-lbl">DATA:</span>
+        <span class="telemetry-val" style="color: var(--text-muted)">OPENFREEMAP · OSM</span>
       </div>
     </div>
   </footer>
