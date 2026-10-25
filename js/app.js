@@ -150,7 +150,7 @@ import { StreetRoamController } from './street-roam.js';
   btnCinematic.addEventListener('click', () => {
     const isPlaying = cinematicCtrl.toggle();
     btnCinematic.classList.toggle('active', isPlaying);
-    btnCinematic.textContent = isPlaying ? '⏹️ Exit Tour' : '🎬 Cinematic Tour';
+    btnCinematic.textContent = isPlaying ? '⏹️ Exit Flyover' : '🎬 360° Flyover';
   });
 
   // Street Roam Mode
@@ -159,7 +159,7 @@ import { StreetRoamController } from './street-roam.js';
       if (speedometerVal) speedometerVal.textContent = Math.abs(speed);
     });
     btnStreetRoam.classList.toggle('active', isRoaming);
-    btnStreetRoam.textContent = isRoaming ? '⏹️ Exit Roam' : '🏎️ Street Roam';
+    btnStreetRoam.textContent = isRoaming ? '⏹️ Exit Street View' : '🚶 Street View';
     streetHud.classList.toggle('hidden', !isRoaming);
   });
 

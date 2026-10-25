@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ViceMaps 3D · GTA VI Dusk Map Engine</title>
-  <meta name="description" content="Next-gen 3D map clone inspired by GTA VI trailer trailer neon dusk aesthetic with real-time 3D building extrusions, GPS navigation, and street roam.">
+  <title>Terra 3D · Google Maps Reimagined in 3D</title>
+  <meta name="description" content="Next-generation Google Maps alternative with real-time worldwide 3D building extrusions, sunset dusk lighting, live GPS navigation, and street view roam.">
 
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,8 +36,8 @@
         </svg>
       </div>
       <div class="brand-text">
-        VICEMAPS <span>3D</span>
-        <span class="brand-tag">GTA VI</span>
+        TERRA <span>3D</span>
+        <span class="brand-tag">MAPS REIMAGINED</span>
       </div>
     </div>
 
@@ -48,7 +48,7 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="search-input" placeholder="Search any city, street, or landmark worldwide..." autocomplete="off">
+        <input type="text" id="search-input" placeholder="Search any city, street, restaurant, or landmark worldwide..." autocomplete="off">
         <button id="btn-gps-locate" class="btn-gps-inline" title="Center on My Real-Time GPS Location">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
@@ -60,19 +60,19 @@
 
     <!-- City / District Bookmarks Selector -->
     <div class="city-select-wrap">
-      <select id="city-select" aria-label="Select Vice City District">
+      <select id="city-select" aria-label="Select City Landmark">
         <!-- Options populated dynamically from config.js -->
       </select>
     </div>
   </header>
 
-  <!-- Category Filter Pills -->
+  <!-- Category Filter Pills (Real-World Google Maps Categories) -->
   <nav class="category-filters-bar" id="category-filters">
-    <button class="cat-pill active" data-cat="all">⚡ All POIs</button>
-    <button class="cat-pill" data-cat="nightlife">🍸 Nightlife</button>
-    <button class="cat-pill" data-cat="missions">🎯 Missions</button>
-    <button class="cat-pill" data-cat="luxury">💎 Luxury</button>
-    <button class="cat-pill" data-cat="waterfront">🛥️ Waterfront</button>
+    <button class="cat-pill active" data-cat="all">✨ All Places</button>
+    <button class="cat-pill" data-cat="restaurants">🍽️ Food & Dining</button>
+    <button class="cat-pill" data-cat="hotels">🏨 Hotels</button>
+    <button class="cat-pill" data-cat="transit">🚆 Transit</button>
+    <button class="cat-pill" data-cat="sights">🏛️ Sights & Culture</button>
   </nav>
 
   <!-- 2. Left HUD: Turn-by-Turn GPS Waypoint Card -->
@@ -104,15 +104,15 @@
       <span>🏢 3D Buildings</span>
       <span class="btn-indicator">ON</span>
     </button>
-    <button class="dock-btn active" id="btn-toggle-neon" title="Toggle Vice Neon Glow">
-      <span>🌆 Neon Dusk</span>
+    <button class="dock-btn active" id="btn-toggle-neon" title="Toggle Dusk Sunset Lighting">
+      <span>🌆 Sunset Dusk</span>
       <span class="btn-indicator">ON</span>
     </button>
     <button class="dock-btn" id="btn-cinematic" title="Camera Orbit Cinematic Tour (Hotkey: C)">
-      <span>🎬 Cinematic Tour</span>
+      <span>🎬 360° Flyover</span>
     </button>
-    <button class="dock-btn" id="btn-street-roam" title="Street Level WASD Roam (Hotkey: R)">
-      <span>🏎️ Street Roam</span>
+    <button class="dock-btn" id="btn-street-roam" title="First-Person Street View Roam (Hotkey: R)">
+      <span>🚶 Street View</span>
     </button>
 
     <div class="dock-slider-box">

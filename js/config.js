@@ -42,13 +42,13 @@ export const MAP_CONFIG = {
   // Iconic City Skylines
   cityBookmarks: [
     {
-      id: "vice-city",
-      name: "🌴 Vice City (Miami)",
+      id: "miami",
+      name: "🌴 Miami (Biscayne Bay)",
       center: [-80.1880, 25.7725],
       zoom: 15.8,
       pitch: 65,
       bearing: 38,
-      tag: "GTA 6 Setting"
+      tag: "Coastal Skyline"
     },
     {
       id: "tokyo",

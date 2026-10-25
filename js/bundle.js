@@ -39,13 +39,13 @@
     // Iconic City Skylines
     cityBookmarks: [
       {
-        id: "vice-city",
-        name: "\u{1F334} Vice City (Miami)",
+        id: "miami",
+        name: "\u{1F334} Miami (Biscayne Bay)",
         center: [-80.188, 25.7725],
         zoom: 15.8,
         pitch: 65,
         bearing: 38,
-        tag: "GTA 6 Setting"
+        tag: "Coastal Skyline"
       },
       {
         id: "tokyo",
@@ -91,88 +91,88 @@
   // vicemaps-3d/js/poi-data.js
   var POI_DATA = [
     {
-      id: "ocean-drive",
-      title: "Ocean Drive & Art Deco Strip",
-      category: "strip",
-      categoryLabel: "Iconic Strip",
-      icon: "\u{1F334}",
-      color: "#00f0ff",
-      coords: [-80.1305, 25.7825],
-      camera: { zoom: 16.5, pitch: 70, bearing: 6 },
-      description: "The world-famous Art Deco neon avenue running along South Beach. High-density pedestrian buzz, vintage supercars, and pastel facades.",
-      tags: ["Beach", "Neon", "Cruising", "Nightlife"]
-    },
-    {
-      id: "malibu-club",
-      title: "The Malibu Club",
-      category: "nightlife",
-      categoryLabel: "Nightclub",
-      icon: "\u{1F378}",
-      color: "#ff007f",
-      coords: [-80.1328, 25.7905],
-      camera: { zoom: 16.8, pitch: 65, bearing: -30 },
-      description: "The legendary multi-level neon nightclub. Electronic synthwave beats, VIP rooftop lounge, and beachfront cocktail terrace.",
-      tags: ["Nightclub", "Synthwave", "VIP"]
-    },
-    {
-      id: "downtown-towers",
-      title: "Downtown Financial Towers & Skybridge",
-      category: "landmark",
-      categoryLabel: "Skyscrapers",
+      id: "times-square",
+      title: "Times Square & Broadway District",
+      category: "sights",
+      categoryLabel: "Iconic Landmark",
       icon: "\u{1F3D9}\uFE0F",
       color: "#00f0ff",
-      coords: [-80.1905, 25.7715],
-      camera: { zoom: 16, pitch: 74, bearing: 45 },
-      description: "Volumetric glass monoliths towering over the bay. Includes rooftop infinity decks, high-speed elevators, and banking headquarters.",
-      tags: ["Skyscrapers", "Commercial", "3D Architecture"]
+      coords: [-73.9855, 40.758],
+      camera: { zoom: 16.5, pitch: 72, bearing: 28 },
+      description: "The premier commercial intersection in Midtown Manhattan. Illuminated digital displays, Broadway theaters, and dense skyscraper canyons.",
+      tags: ["New York", "Manhattan", "Sightseeing", "Theaters"]
     },
     {
-      id: "downtown-helipad",
-      title: "Apex Tower Rooftop Helipad",
-      category: "helipad",
-      categoryLabel: "Helipad",
-      icon: "\u{1F681}",
+      id: "eiffel-tower",
+      title: "Eiffel Tower & Champ de Mars",
+      category: "sights",
+      categoryLabel: "Monument",
+      icon: "\u{1F5FC}",
       color: "#f59e0b",
-      coords: [-80.1872, 25.768],
-      camera: { zoom: 17.2, pitch: 75, bearing: 110 },
-      description: "Private executive rooftop helipad standing 210 meters above Biscayne Bay. Prime launch point for panoramic aerial city flyovers.",
-      tags: ["Aviation", "Helipad", "Skyline View"]
+      coords: [2.2945, 48.8584],
+      camera: { zoom: 16.2, pitch: 68, bearing: -45 },
+      description: "Wrought-iron lattice tower on the Champ de Mars in Paris. World-renowned architectural icon with panoramic Seine river views.",
+      tags: ["Paris", "France", "Monument", "Architecture"]
     },
     {
-      id: "port-of-vice",
-      title: "Port of Vice City & Mega-Terminal",
-      category: "marina",
-      categoryLabel: "Port & Marina",
-      icon: "\u2693",
+      id: "shibuya-crossing",
+      title: "Shibuya Crossing & Hachiko Square",
+      category: "transit",
+      categoryLabel: "Transit & District",
+      icon: "\u{1F686}",
+      color: "#ff007f",
+      coords: [139.7006, 35.6595],
+      camera: { zoom: 17, pitch: 65, bearing: 15 },
+      description: "The world's busiest pedestrian scramble intersection outside Shibuya Station. Multi-directional neon video billboards and subway network.",
+      tags: ["Tokyo", "Japan", "Transit", "Crosswalk"]
+    },
+    {
+      id: "burj-khalifa",
+      title: "Burj Khalifa & Downtown Dubai",
+      category: "sights",
+      categoryLabel: "Super-Skyscraper",
+      icon: "\u2728",
+      color: "#00f0ff",
+      coords: [55.2744, 25.1972],
+      camera: { zoom: 16, pitch: 76, bearing: -60 },
+      description: "The tallest structure on Earth standing at 828 meters. Surrounded by the Dubai Fountain, luxury hotels, and expansive avenue grids.",
+      tags: ["Dubai", "UAE", "Skyscrapers", "Modern"]
+    },
+    {
+      id: "big-ben",
+      title: "Palace of Westminster & Big Ben",
+      category: "sights",
+      categoryLabel: "Historic Landmark",
+      icon: "\u{1F3DB}\uFE0F",
+      color: "#f59e0b",
+      coords: [-0.1246, 51.5007],
+      camera: { zoom: 16.5, pitch: 66, bearing: 85 },
+      description: "The historic seat of the Parliament of the United Kingdom on the river Thames. Celebrated neo-Gothic clock tower and Westminster Bridge.",
+      tags: ["London", "UK", "History", "Thames"]
+    },
+    {
+      id: "ocean-drive",
+      title: "Ocean Drive & Art Deco District",
+      category: "restaurants",
+      categoryLabel: "Dining & Promenade",
+      icon: "\u{1F37D}\uFE0F",
       color: "#10b981",
-      coords: [-80.17, 25.776],
-      camera: { zoom: 15.2, pitch: 62, bearing: -75 },
-      description: "One of the busiest maritime cruise and cargo terminals in the Americas. Massive container gantries, luxury cruise liners, and deep-water docks.",
-      tags: ["Shipping", "Superyachts", "Harbor"]
+      coords: [-80.1305, 25.7825],
+      camera: { zoom: 16.5, pitch: 70, bearing: 6 },
+      description: "Historic waterfront promenade lined with sidewalk bistros, boutique hotels, and preserved 1930s Art Deco architecture.",
+      tags: ["Miami", "Bistros", "Architecture", "Dining"]
     },
     {
-      id: "venetian-islands",
-      title: "Venetian Causeway & Island Mansions",
-      category: "strip",
-      categoryLabel: "Causeway",
-      icon: "\u{1F309}",
-      color: "#8b5cf6",
-      coords: [-80.16, 25.7905],
-      camera: { zoom: 15.6, pitch: 68, bearing: 82 },
-      description: "Chain of man-made residential barrier islands linked by toll bridges. Waterfront villas with private boat slips and bayfront skyline views.",
-      tags: ["Bridge", "Waterfront", "Speedway"]
-    },
-    {
-      id: "star-island",
-      title: "Star Island Billionaire Enclave",
-      category: "landmark",
-      categoryLabel: "Luxury Estates",
-      icon: "\u{1F3F0}",
-      color: "#f59e0b",
-      coords: [-80.15, 25.778],
-      camera: { zoom: 16.2, pitch: 64, bearing: -40 },
-      description: "Gated celebrity island guarded by private water security. Mega-mansions with helicopter pads, tennis courts, and Biscayne Bay frontage.",
-      tags: ["Exclusive", "Estates", "Gated"]
+      id: "marina-bay",
+      title: "Marina Bay Sands & Gardens",
+      category: "hotels",
+      categoryLabel: "Hotel & Resort",
+      icon: "\u{1F3E8}",
+      color: "#ff007f",
+      coords: [103.8596, 1.2834],
+      camera: { zoom: 16.3, pitch: 68, bearing: -120 },
+      description: "Integrated resort complex featuring three 55-story hotel towers topped by a cantilevered SkyPark and infinite waterfront promenade.",
+      tags: ["Singapore", "Hotel", "Resort", "Waterfront"]
     }
   ];
 
@@ -873,14 +873,14 @@
     btnCinematic.addEventListener("click", () => {
       const isPlaying = cinematicCtrl.toggle();
       btnCinematic.classList.toggle("active", isPlaying);
-      btnCinematic.textContent = isPlaying ? "\u23F9\uFE0F Exit Tour" : "\u{1F3AC} Cinematic Tour";
+      btnCinematic.textContent = isPlaying ? "\u23F9\uFE0F Exit Flyover" : "\u{1F3AC} 360\xB0 Flyover";
     });
     btnStreetRoam.addEventListener("click", () => {
       const isRoaming = streetRoamCtrl.toggle((speed) => {
         if (speedometerVal) speedometerVal.textContent = Math.abs(speed);
       });
       btnStreetRoam.classList.toggle("active", isRoaming);
-      btnStreetRoam.textContent = isRoaming ? "\u23F9\uFE0F Exit Roam" : "\u{1F3CE}\uFE0F Street Roam";
+      btnStreetRoam.textContent = isRoaming ? "\u23F9\uFE0F Exit Street View" : "\u{1F6B6} Street View";
       streetHud.classList.toggle("hidden", !isRoaming);
     });
     let searchDebounceTimer = null;
