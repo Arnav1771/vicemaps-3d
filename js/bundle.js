@@ -1209,34 +1209,34 @@
         if (telemetryLighting) telemetryLighting.textContent = labels[mode] || mode.toUpperCase();
       });
     });
-    pitchSlider.addEventListener("input", (e) => {
+    pitchSlider?.addEventListener("input", (e) => {
       const val = parseFloat(e.target.value);
       mapEngine.setPitch(val);
-      pitchValText.textContent = `${val}\xB0`;
+      if (pitchValText) pitchValText.textContent = `${val}\xB0`;
     });
-    btnToggle3D.addEventListener("click", () => {
+    btnToggle3D?.addEventListener("click", () => {
       const active = btnToggle3D.classList.toggle("active");
       mapEngine.toggle3D(active);
     });
-    btnToggleNeon.addEventListener("click", () => {
+    btnToggleNeon?.addEventListener("click", () => {
       const active = btnToggleNeon.classList.toggle("active");
       mapEngine.toggleNeonMode(active);
     });
-    btnCinematic.addEventListener("click", () => {
+    btnCinematic?.addEventListener("click", () => {
       const isPlaying = cinematicCtrl.toggle();
       btnCinematic.classList.toggle("active", isPlaying);
       btnCinematic.textContent = isPlaying ? "\u23F9\uFE0F Exit Flyover" : "\u{1F3AC} 360\xB0 Flyover";
     });
-    btnStreetRoam.addEventListener("click", () => {
+    btnStreetRoam?.addEventListener("click", () => {
       const isRoaming = streetRoamCtrl.toggle((speed) => {
         if (speedometerVal) speedometerVal.textContent = Math.abs(speed);
       });
       btnStreetRoam.classList.toggle("active", isRoaming);
       btnStreetRoam.textContent = isRoaming ? "\u23F9\uFE0F Exit Street View" : "\u{1F6B6} Street View";
-      streetHud.classList.toggle("hidden", !isRoaming);
+      if (streetHud) streetHud.classList.toggle("hidden", !isRoaming);
     });
     let searchDebounceTimer = null;
-    searchInput.addEventListener("input", (e) => {
+    searchInput?.addEventListener("input", (e) => {
       const q = e.target.value.trim();
       if (!q) {
         searchSuggestions.classList.add("hidden");
@@ -1246,13 +1246,61 @@
       searchDebounceTimer = setTimeout(async () => {
         const localMatches = POI_DATA.filter(
           (p) => p.title.toLowerCase().includes(q.toLowerCase()) || p.categoryLabel.toLowerCase().includes(q.toLowerCase()) || p.tags.some((t) => t.toLowerCase().includes(q.toLowerCase()))
-        ).slice(0, 3);
-        let globalMatches = [];
+        ).slice(0, 4);
+        function renderItems(items) {
+          if (!items.length) {
+            searchSuggestions.innerHTML = `<div class="search-item empty">No matching location found on Earth</div>`;
+            searchSuggestions.classList.remove("hidden");
+            return;
+          }
+          searchSuggestions.innerHTML = items.map((item) => `
+          <div class="search-item" data-coords="${item.coords[0]},${item.coords[1]}" data-title="${item.title}">
+            <span class="search-icon">${item.icon}</span>
+            <div class="search-info">
+              <div class="search-title">
+                ${item.title}
+                ${item.isGlobal ? '<span class="search-item-global-badge">WORLDWIDE</span>' : '<span class="search-item-global-badge" style="border-color:var(--neon-emerald); color:var(--neon-emerald)">CURATED</span>'}
+              </div>
+              <div class="search-cat">${item.subtitle}</div>
+            </div>
+          </div>
+        `).join("");
+          searchSuggestions.classList.remove("hidden");
+          searchSuggestions.querySelectorAll(".search-item:not(.empty)").forEach((el) => {
+            el.addEventListener("click", () => {
+              const coords = el.dataset.coords.split(",").map(Number);
+              const title = el.dataset.title;
+              const subtitle = el.querySelector(".search-cat")?.textContent || "Global Landmark";
+              if (searchInput) searchInput.value = title;
+              searchSuggestions.classList.add("hidden");
+              showPlaceDetail({
+                title,
+                subtitle,
+                coords,
+                category: "sights",
+                categoryLabel: "Curated Landmark",
+                rating: "4.8",
+                reviews: "1,850 Google reviews",
+                description: `${title} (${subtitle}) rendered in full 3D vector geometry with photorealistic perspective camera.`
+              });
+            });
+          });
+        }
+        const initialList = localMatches.map((m) => ({
+          title: m.title,
+          subtitle: m.description ? m.description.split(".")[0] : m.categoryLabel,
+          coords: m.coords,
+          isGlobal: false,
+          icon: m.icon || "\u{1F4CD}"
+        }));
+        if (initialList.length) {
+          renderItems(initialList);
+        }
         try {
-          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`);
+          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`, { signal: AbortSignal.timeout(3e3) });
           if (res.ok) {
             const data = await res.json();
-            globalMatches = (data.features || []).map((f) => {
+            const globalMatches = (data.features || []).map((f) => {
               const props = f.properties || {};
               const name = props.name || props.street || q;
               const subtitle = [props.city, props.state, props.country].filter(Boolean).join(", ");
@@ -1264,58 +1312,15 @@
                 icon: "\u{1F30D}"
               };
             });
+            const combined = [...initialList, ...globalMatches];
+            renderItems(combined);
           }
         } catch (err) {
-          console.warn("Global geocode lookup:", err);
+          if (!initialList.length) {
+            renderItems([]);
+          }
         }
-        const combined = [
-          ...localMatches.map((m) => ({
-            title: m.title,
-            subtitle: `${m.categoryLabel} \u2022 Vice City`,
-            coords: m.coords,
-            isGlobal: false,
-            icon: m.icon
-          })),
-          ...globalMatches
-        ];
-        if (!combined.length) {
-          searchSuggestions.innerHTML = `<div class="search-item empty">No matching location found on Earth</div>`;
-          searchSuggestions.classList.remove("hidden");
-          return;
-        }
-        searchSuggestions.innerHTML = combined.map((item) => `
-        <div class="search-item" data-coords="${item.coords[0]},${item.coords[1]}" data-title="${item.title}">
-          <span class="search-icon">${item.icon}</span>
-          <div class="search-info">
-            <div class="search-title">
-              ${item.title}
-              ${item.isGlobal ? '<span class="search-item-global-badge">WORLDWIDE</span>' : ""}
-            </div>
-            <div class="search-cat">${item.subtitle}</div>
-          </div>
-        </div>
-      `).join("");
-        searchSuggestions.classList.remove("hidden");
-        searchSuggestions.querySelectorAll(".search-item:not(.empty)").forEach((el) => {
-          el.addEventListener("click", () => {
-            const coords = el.dataset.coords.split(",").map(Number);
-            const title = el.dataset.title;
-            const subtitle = el.querySelector(".search-cat")?.textContent || "Global Landmark";
-            searchInput.value = title;
-            searchSuggestions.classList.add("hidden");
-            showPlaceDetail({
-              title,
-              subtitle,
-              coords,
-              category: "sights",
-              categoryLabel: "Search Landmark",
-              rating: "4.9",
-              reviews: "2,450 Google reviews",
-              description: `${title} (${subtitle}) rendered with full 3D vector geometry, custom volumetric lighting, and interactive camera perspective.`
-            });
-          });
-        });
-      }, 280);
+      }, 120);
     });
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".search-box-wrap")) {
@@ -1338,56 +1343,6 @@
           });
         }
       });
-    });
-    function showPlaceDetail(place) {
-      selectedPlace = place;
-      if (placeCatBadge) placeCatBadge.textContent = place.categoryLabel || place.category || "Point of Interest";
-      if (placeDetailTitle) placeDetailTitle.textContent = place.title;
-      if (placeReviewsText) placeReviewsText.textContent = `(${place.reviews || "1,850 Google reviews"})`;
-      if (placeAddressText) placeAddressText.textContent = `\u{1F4CD} ${place.subtitle || place.address || "Global Destination"}`;
-      if (placeDescText) {
-        placeDescText.textContent = place.description || `${place.title} is an authentic real-world landmark rendered in full photorealistic 3D vector geometry.`;
-      }
-      placeDetailCard?.classList.remove("hidden");
-      directionsDrawer?.classList.add("hidden");
-      activeNavBanner?.classList.add("hidden");
-      routeHud?.classList.add("hidden");
-      if (place.coords) {
-        mapEngine.flyTo(place.coords, 16.5, 66, 32);
-      }
-    }
-    btnClosePlaceCard?.addEventListener("click", () => {
-      placeDetailCard?.classList.add("hidden");
-    });
-    btnPlaceSave?.addEventListener("click", () => {
-      const isSaved = btnSaveLabel?.textContent.includes("Saved");
-      if (btnSaveLabel) btnSaveLabel.textContent = isSaved ? "Save" : "Saved \u2B50";
-      if (btnPlaceSave) {
-        btnPlaceSave.style.borderColor = isSaved ? "var(--border-hud)" : "var(--neon-amber)";
-        btnPlaceSave.style.color = isSaved ? "var(--text-primary)" : "var(--neon-amber)";
-      }
-    });
-    btnPlaceFlyover?.addEventListener("click", () => {
-      cinematicCtrl.toggle();
-    });
-    btnPlaceStreetView?.addEventListener("click", () => {
-      btnStreetRoam?.click();
-    });
-    btnPlaceDirections?.addEventListener("click", () => {
-      if (selectedPlace) {
-        openDirectionsDrawer(selectedPlace.coords, selectedPlace.title);
-      }
-    });
-    window.addEventListener("terra-poi-click", (e) => {
-      if (e.detail) showPlaceDetail(e.detail);
-    });
-    document.addEventListener("click", (e) => {
-      const routeBtn = e.target.closest(".btn-popup-route");
-      if (routeBtn) {
-        const coords = routeBtn.dataset.coords.split(",").map(Number);
-        const name = routeBtn.dataset.name;
-        openDirectionsDrawer(coords, name);
-      }
     });
     const STORAGE_KEYS = {
       SAVED_PLACES: "terra_3d_saved_places",
